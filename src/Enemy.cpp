@@ -1,0 +1,36 @@
+//
+// Created by ken-soares on 02/04/2024.
+//
+
+#include "Enemy.h"
+
+#include <utility>
+
+
+Enemy::Enemy(const enemyDef& d) {
+    def = d;
+    pos = {
+            screenWidth,
+            d.offset * ((float) screenHeight),
+    };
+
+}
+Enemy::~Enemy() {
+    //std::cout << "Enemy got destroyed" << std::endl;
+}
+void Enemy::update(std::list<Bullet>& listBullets) {
+    def.funcMove(*this);
+    def.funcFire(*this, listBullets);
+    def.timer -= sceneSpeed;
+    if(def.timer <= 0) {
+        listBullets.clear();
+    }
+}
+
+Vector2 Enemy::getPos() {
+    return pos;
+}
+
+void Enemy::setPos(Vector2 p) {
+    pos = p;
+}
