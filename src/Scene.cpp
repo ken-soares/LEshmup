@@ -1,5 +1,5 @@
 //
-// Created by Admin on 01/07/2024.
+// Created by ken-soares on 01/07/2024.
 //
 
 #include "Scene.h"
@@ -7,6 +7,7 @@
 #include <utility>
 #include "patterns.h"
 #include "raymath.h"
+#include <iostream>
 
 void drawHUD(const Player &player) {
     DrawText("Health", 10, 10, 20, WHITE);
@@ -18,7 +19,7 @@ void drawHUD(const Player &player) {
     }
 }
 
-Scene::Scene(std::string bg_path, const std::list<enemyDef> &lp) : background(std::move(bg_path)) {
+Scene::Scene(std::string bg_path, const std::list<enemyDef> &lp) : BaseScene(), background(std::move(bg_path)) {
     // chargement des textures des ennemis
     enemySprites[0] = LoadTexture("../res/one.png");
     enemySprites[1] = LoadTexture("../res/two.png");
@@ -30,7 +31,7 @@ Scene::Scene(std::string bg_path, const std::list<enemyDef> &lp) : background(st
 Scene::~Scene() = default;
 
 
-int Scene::update(int nextSceneCount) {
+int Scene::update(const int nextSceneCount) {
     player.update();
     background.update();
 
@@ -175,6 +176,6 @@ void Scene::draw() {
         listEnemies.clear();
         listBullets.clear();
         DrawRectangle(0, 0, screenWidth, screenHeight, {255, 0, 0, 40});
-        DrawText("GAME OVER", screenWidth / 2.25f, screenHeight / 2, 35, WHITE);
+        DrawText("GAME OVER",static_cast<int>(screenWidth / 2.25f), screenHeight / 2, 35, WHITE);
     }
 }

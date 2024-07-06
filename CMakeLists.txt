@@ -41,6 +41,12 @@ add_executable(${PROJECT_NAME}
         src/patterns.h
         src/Scene.cpp
         src/Scene.h
+        src/MainMenu.cpp
+        src/MainMenu.h
+        src/BaseClass.cpp
+        src/BaseClass.h
+        src/BaseScene.cpp
+        src/BaseScene.h
 )
 
 #set(raylib_VERBOSE 1)

@@ -7,12 +7,16 @@
 
 #include "raylib.h"
 
-const int screenWidth = 1280;
-const int screenHeight = 720;
-const float sceneSpeed = 4.0f;
+constexpr int screenWidth = 1280;
+constexpr int screenHeight = 720;
+constexpr float sceneSpeed = 4.0f;
+
+constexpr int gameFontSpacing = 2;
+constexpr int gameNameSize = 50;
+constexpr int menuItemSize = 35;
 
 
-typedef enum Ecrans {
+enum Ecrans {
     MENU = 0,
     LV1,
     LV2,
@@ -20,7 +24,7 @@ typedef enum Ecrans {
     LV4,
     LV5,
     SCOREBOARD,
-} Ecrans;
+};
 
 enum BulletType {
     BULLET_LONG,

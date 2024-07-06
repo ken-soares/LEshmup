@@ -3,12 +3,13 @@
 //
 
 #include "Globals.h"
+#include "MainMenu.h"
 #include "raylib.h"
 #include "patterns.h"
 #include "Scene.h"
+#include <iostream>
 
-// TODO: Réimplémenter le fullscreen quand le système de scenes est bon
-
+// TODO: Faire en sorte que les vies du joueurs ne se reset pas d'un stage à l'autre
 
 std::list<enemyDef> listSpawn1 = {
     {60.0, 2, 3.0f, 0.5f, move_fast, fire_none},
@@ -29,7 +30,6 @@ std::shared_ptr<Scene> SwitchScenes(const int count) {
         default:
             std::cout << "changed scene count:" << count << std::endl;
             return std::make_shared<Scene>("../res/background.png", listSpawn1);
-            break;
     }
 }
 
@@ -42,13 +42,17 @@ int main() {
 
     // données de la scène
     try {
-        int currSceneCount = 1;
-        int nextSceneCount = 1;
-        std::shared_ptr<Scene> currScene = std::make_shared<Scene>("../res/background.png", listSpawn1);
+        int currSceneCount = 0;
+        int nextSceneCount = 0;
+        std::shared_ptr<BaseScene> currScene = std::make_shared<MainMenu>();
         SetTargetFPS(60);
 
         while (!WindowShouldClose()) {
-            nextSceneCount = currScene->update(nextSceneCount);
+
+            nextSceneCount = currScene->update(currSceneCount);
+
+            if(nextSceneCount == -1)
+                break;
 
             if (nextSceneCount != currSceneCount) {
                 currScene = SwitchScenes(nextSceneCount);
@@ -63,6 +67,9 @@ int main() {
         std::cout << e.what() << std::endl;
         ret_value = EXIT_FAILURE;
     }
+
+
+    CloseWindow();
 
     return ret_value;
 }
