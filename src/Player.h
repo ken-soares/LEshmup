@@ -13,18 +13,18 @@ class Player {
 public:
     Player();
     ~Player();
-    void draw();
+    void draw() const;
     void update();
 
     void setHealth(int value);
-    int getHealth() const;
+    [[nodiscard]] int getHealth() const;
 
-    bool getShowHitBox() const;
+    [[nodiscard]] bool getShowHitBox() const;
     void setShowHitBox(bool value);
     void setPosition(Vector2 value);
-    Vector2 getPosition();
+    [[nodiscard]] Vector2 getPosition() const;
 
-    Vector2 getHitBoxVec() const;
+    [[nodiscard]] Vector2 getHitBoxVec() const;
 
 
     Rectangle frameRect{};

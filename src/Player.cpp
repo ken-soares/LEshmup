@@ -3,55 +3,51 @@
 //
 
 #include "Player.h"
-#include <iostream>
 
 Player::Player() {
-    playerPosition = {40, (float) screenHeight / 2};
+    playerPosition = {40, static_cast<float>(screenHeight) / 2};
     playerSpeed = 10.0f;
     playerTexture = LoadTexture("../res/character.png");
     numFrames = 4;
     playerTextureSize = playerTexture.width / numFrames;
-    frameRect = {0.0f, 0.0f, (float) playerTextureSize, (float) playerTexture.height};
+    frameRect = {0.0f, 0.0f, static_cast<float>(playerTextureSize), static_cast<float>(playerTexture.height)};
     health = 3;
     showHitBox = false;
     gunReloadTimer = 0;
     gunReloadDelay = 0.2f;
 
     immuneDelay = 1.5f;
+    immuneTimer = 0.0f;
     wasShot = false;
 }
 
 Player::~Player() = default;
 
-void Player::draw() {
+void Player::draw() const {
     if(!wasShot) {
         DrawTextureRec(playerTexture, frameRect, playerPosition, WHITE);
     } else {
         DrawTextureRec(playerTexture, frameRect, playerPosition, RED);
     }
     if(showHitBox){
-        DrawCircle((int)(playerPosition.x+(float)playerTextureSize/2), (int)(playerPosition.y+105), 8.0f, RED);
-        DrawCircle((int)(playerPosition.x+(float)playerTextureSize/2), (int)(playerPosition.y+105), 5.0f, ORANGE);
+        DrawCircle(static_cast<int>(playerPosition.x + static_cast<float>(playerTextureSize) / 2), static_cast<int>(playerPosition.y + 105), 8.0f, RED);
+        DrawCircle(static_cast<int>(playerPosition.x + static_cast<float>(playerTextureSize) / 2), static_cast<int>(playerPosition.y + 105), 5.0f, ORANGE);
     }
 
 }
 
 void Player::update() {
 
-    if(IsKeyDown(KEY_LEFT_ALT) && IsKeyDown(KEY_ENTER)) {
-        ToggleFullscreen();
-    }
-
     if (IsKeyDown(KEY_LEFT) && playerPosition.x > 0) {
         playerPosition.x -= playerSpeed;
     }
-    if (IsKeyDown(KEY_RIGHT) && (int)playerPosition.x < screenWidth - playerTextureSize/1.5) {
+    if (IsKeyDown(KEY_RIGHT) && static_cast<int>(playerPosition.x) < screenWidth - playerTextureSize/1.5) {
         playerPosition.x += playerSpeed;
     }
     if (IsKeyDown(KEY_UP) && playerPosition.y > 0) {
         playerPosition.y -= playerSpeed;
     }
-    if (IsKeyDown(KEY_DOWN) && (int)playerPosition.y < screenHeight - playerTexture.height) {
+    if (IsKeyDown(KEY_DOWN) && static_cast<int>(playerPosition.y) < screenHeight - playerTexture.height) {
         playerPosition.y += playerSpeed;
     }
     if (IsKeyDown(KEY_LEFT_SHIFT)) {
@@ -74,7 +70,7 @@ void Player::update() {
 
     if(wasShot) {
         immuneTimer += GetFrameTime();
-        std::cout << "Immune timer: "  << immuneTimer << std::endl;
+        //std::cout << "Immune timer: "  << immuneTimer << std::endl;
     }
 
     if(immuneTimer >= immuneDelay) {
@@ -125,7 +121,7 @@ void Player::setShowHitBox(bool value) {
     showHitBox = value;
 }
 
-Vector2 Player::getPosition() {
+Vector2 Player::getPosition() const {
     return playerPosition;
 }
 
@@ -134,5 +130,5 @@ void Player::setPosition(Vector2 value) {
 }
 
 Vector2 Player::getHitBoxVec() const {
-    return Vector2 {playerPosition.x + (float)playerTextureSize/2, playerPosition.y+105};
+    return Vector2 {playerPosition.x + static_cast<float>(playerTextureSize)/2, playerPosition.y+105};
 }

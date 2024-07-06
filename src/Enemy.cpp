@@ -4,21 +4,18 @@
 
 #include "Enemy.h"
 
-#include <utility>
-
 
 Enemy::Enemy(const enemyDef& d) {
     def = d;
     pos = {
             screenWidth,
-            d.offset * ((float) screenHeight),
+            d.offset * static_cast<float>(screenHeight),
     };
 
 }
-Enemy::~Enemy() {
-    //std::cout << "Enemy got destroyed" << std::endl;
-}
-void Enemy::update(std::list<Bullet>& listBullets) {
+Enemy::~Enemy() = default;
+
+void Enemy::update(std::list<Bullet> &listBullets) {
     def.funcMove(*this);
     def.funcFire(*this, listBullets);
     def.timer -= sceneSpeed;
@@ -27,7 +24,7 @@ void Enemy::update(std::list<Bullet>& listBullets) {
     }
 }
 
-Vector2 Enemy::getPos() {
+Vector2 Enemy::getPos() const {
     return pos;
 }
 

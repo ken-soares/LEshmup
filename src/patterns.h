@@ -1,5 +1,5 @@
 //
-// Created by Admin on 01/07/2024.
+// Created by ken-soares on 01/07/2024.
 //
 
 #ifndef PATTERNS_H
@@ -85,9 +85,10 @@ inline auto fire_CirclePulse12 = [](Enemy &e, std::list<Bullet> &bullets) {
 inline auto fire_SpiralReverse02 = [](Enemy &e, std::list<Bullet> &bullets) {
   constexpr float fDelay = 0.013f;
   e.dataFire[0] += GetFrameTime();
-  const float offset_amount = 0.2f;
 
   if (e.dataFire[0] >= fDelay) {
+
+      constexpr float offset_amount = 0.2f;
 
       e.dataFire[3] += 0.5f;
       if(static_cast<int>(e.dataFire[3]) >= 50) {

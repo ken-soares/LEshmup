@@ -9,7 +9,6 @@
 #include "raylib.h"
 #include <cstdint>
 #include <functional>
-#include <iostream>
 #include <list>
 #include <memory>
 
@@ -30,7 +29,7 @@ public:
     explicit Enemy(const enemyDef& d);
     ~Enemy();
     void update(std::list<Bullet>& listBullets);
-    Vector2 getPos();
+    [[nodiscard]] Vector2 getPos() const;
     void setPos(Vector2 p);
     enemyDef def;
 
