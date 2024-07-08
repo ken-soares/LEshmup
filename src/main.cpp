@@ -11,6 +11,12 @@
 
 // TODO: Faire en sorte que les vies du joueurs ne se reset pas d'un stage à l'autre
 
+
+/* feuille de route
+ on va commencer par mettre le score par niveau avec un int dans la classe Scene
+ ensuite on créera une structure de retour pour update
+*/
+
 std::list<enemyDef> listSpawn1 = {
     {60.0, 2, 3.0f, 0.5f, move_fast, fire_none},
     {180.0, 2, 3.0f, 0.75f, move_sin_narrow, fire_Straight2},
@@ -47,6 +53,10 @@ int main() {
         std::shared_ptr<BaseScene> currScene = std::make_shared<MainMenu>();
         SetTargetFPS(60);
 
+        if (!IsCursorHidden()) {
+            HideCursor();
+        }
+
         while (!WindowShouldClose()) {
 
             nextSceneCount = currScene->update(currSceneCount);
@@ -68,8 +78,6 @@ int main() {
         ret_value = EXIT_FAILURE;
     }
 
-
     CloseWindow();
-
     return ret_value;
 }

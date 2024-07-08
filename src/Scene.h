@@ -25,6 +25,11 @@ public:
 
     void draw() override;
 
+    void drawDebugInfo() const;
+
+   void drawHUD(const Player &player) const;
+
+
     Player player;
     float scenePosition = 0.0f;
 
@@ -39,6 +44,11 @@ public:
 
     // liste des tirs
     std::list<Bullet> listBullets;
+
+
+    bool isDebugInfoVisible;
+
+    int sceneScore;
 private:
     Texture2D enemySprites[3]{};
     Background background;

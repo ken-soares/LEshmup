@@ -9,14 +9,23 @@
 #include "raymath.h"
 #include <iostream>
 
-void drawHUD(const Player &player) {
-    DrawText("Health", 10, 10, 20, WHITE);
-    DrawRectangleGradientEx(Rectangle{80, 10, 1000.0f * static_cast<float>(player.getHealth()) / 3, 20}, GREEN, GREEN,
+void Scene::drawHUD(const Player &player) const {
+    DrawRectangle(0, 0, screenWidth, 50, {0, 0, 0, 200});
+
+    DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 20}, GREEN, GREEN,
                             DARKGREEN, DARKGREEN);
 
-    if (!IsCursorHidden()) {
-        HideCursor();
-    }
+    DrawTextEx(gameFont,"Health" , {10, 10}, 20, gameFontSpacing, WHITE);
+    DrawTextEx(gameFont,"Score" , {screenWidth-450, 10}, 20, gameFontSpacing, WHITE);
+    DrawTextEx(gameFont,std::to_string(static_cast<int>(sceneScore)).c_str() , {screenWidth-350, 10}, 20, gameFontSpacing, WHITE);
+}
+
+
+void Scene::drawDebugInfo() const {
+    DrawRectangle(screenWidth - 400, screenHeight-50, 400, 50, {0, 0, 0, 150});
+    DrawText("Current Scene Position: ", screenWidth - 350, screenHeight-30, 15, WHITE);
+    DrawText(std::to_string(static_cast<int>(scenePosition)).c_str(), screenWidth-160, screenHeight-30, 18, GRAY);
+    DrawFPS(screenWidth - 100, screenHeight-30);
 }
 
 Scene::Scene(std::string bg_path, const std::list<enemyDef> &lp) : BaseScene(), background(std::move(bg_path)) {
@@ -26,12 +35,21 @@ Scene::Scene(std::string bg_path, const std::list<enemyDef> &lp) : BaseScene(), 
     enemySprites[2] = LoadTexture("../res/three.png");
 
     listSpawn = lp;
+
+    isDebugInfoVisible = false;
+    sceneScore = 0;
 }
 
 Scene::~Scene() = default;
 
 
 int Scene::update(const int nextSceneCount) {
+
+    if(IsKeyPressed(KEY_F3)) {
+        isDebugInfoVisible = isDebugInfoVisible != true;
+    }
+
+
     player.update();
     background.update();
 
@@ -79,6 +97,7 @@ int Scene::update(const int nextSceneCount) {
                 b.remove = true;
 
                 e->def.health--;
+                sceneScore += KILL_SCORE;
 
                 if (e->def.health <= 0) {
                     for (int i = 0; i < 200; i++) {
@@ -128,9 +147,11 @@ int Scene::update(const int nextSceneCount) {
 void Scene::draw() {
     ClearBackground(BLACK);
     background.draw();
-    drawHUD(player);
-    DrawFPS(screenWidth - 100, 20);
     player.draw();
+
+    if(isDebugInfoVisible) {
+        drawDebugInfo();
+    }
 
     // affichage des tirs
 
@@ -176,6 +197,12 @@ void Scene::draw() {
         listEnemies.clear();
         listBullets.clear();
         DrawRectangle(0, 0, screenWidth, screenHeight, {255, 0, 0, 40});
-        DrawText("GAME OVER",static_cast<int>(screenWidth / 2.25f), screenHeight / 2, 35, WHITE);
+
+        DrawTextEx(gameFont,"GAME OVER" , {static_cast<int>(screenWidth / 2.48f), screenHeight / 1.98f}, 45, gameFontSpacing, BLACK);
+        DrawTextEx(gameFont,"GAME OVER" , {static_cast<int>(screenWidth / 2.5f), screenHeight / 2.0f}, 45, gameFontSpacing, WHITE);
     }
+
+
+
+    drawHUD(player);
 }

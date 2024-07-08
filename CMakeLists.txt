@@ -43,8 +43,6 @@ add_executable(${PROJECT_NAME}
         src/Scene.h
         src/MainMenu.cpp
         src/MainMenu.h
-        src/BaseClass.cpp
-        src/BaseClass.h
         src/BaseScene.cpp
         src/BaseScene.h
 )

@@ -4,7 +4,11 @@
 
 #include "BaseScene.h"
 
-BaseScene::BaseScene() = default;
+BaseScene::BaseScene() {
+
+    // CREDIT Hewett Tsoi
+    gameFont = LoadFont("../res/alagard.ttf");
+}
 
 BaseScene::~BaseScene() = default;
 

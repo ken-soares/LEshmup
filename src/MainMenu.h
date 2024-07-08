@@ -25,7 +25,6 @@ public:
 
 private:
 
-    Font gameFont{};
     int textSize;
     float xCenterText;
 

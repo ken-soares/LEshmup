@@ -5,7 +5,7 @@
 #ifndef BASESCENE_H
 #define BASESCENE_H
 
-
+#include "raylib.h"
 
 class BaseScene {
 public:
@@ -13,6 +13,7 @@ public:
     virtual ~BaseScene();
     virtual void draw();
     virtual int update(int count);
+    Font gameFont{};
 };
 
 

@@ -16,11 +16,7 @@ enum Option {
 
 MainMenu::MainMenu() : BaseScene(){
     select = 0;
-    // par la suite on pourra bouger tout ca dans BaseScene
-    // CREDIT Hewett Tsoi
 
-
-    gameFont = LoadFont("../res/alagard.ttf");
     textSize = static_cast<int>(MeasureTextEx(gameFont, "Game Name", gameNameSize, gameFontSpacing).x);
     xCenterText = static_cast<float>(screenWidth/2.0f - (static_cast<float>(textSize)/2.0f));
 

@@ -7,6 +7,8 @@
 
 #include "raylib.h"
 
+#define KILL_SCORE 150
+
 constexpr int screenWidth = 1280;
 constexpr int screenHeight = 720;
 constexpr float sceneSpeed = 4.0f;
@@ -46,4 +48,5 @@ struct Particle {
     int timer;
     Color color;
 };
+
 #endif//GAME_GLOBALS_H
