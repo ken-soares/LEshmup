@@ -16,8 +16,7 @@
 
 class Scene final : public BaseScene {
 public:
-
-    Scene(std::string bg_path, const std::list<enemyDef>& lp);
+    explicit Scene([[maybe_unused]] std::string filepath, const std::list<enemyDef>& lp);
 
     ~Scene() override;
 
@@ -27,8 +26,7 @@ public:
 
     void drawDebugInfo() const;
 
-   void drawHUD(const Player &player) const;
-
+    void drawHUD() const;
 
     Player player;
     float scenePosition = 0.0f;
@@ -48,7 +46,9 @@ public:
 
     bool isDebugInfoVisible;
 
-    int sceneScore;
+    double sceneScore;
+    double highScore;
+
 private:
     Texture2D enemySprites[3]{};
     Background background;

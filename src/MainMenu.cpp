@@ -52,6 +52,14 @@ int MainMenu::update(int _count) {
     }
 
     if(IsKeyPressed(KEY_ENTER) && select == PLAY) {
+
+        // vérification premier lancement du jeu
+        if(!exists("../res/high.save")) {
+            writeFile("../res/high.save", "0");
+        }
+
+        writeFile("../res/temp.save", "0");
+
         return 1;
     } else {
         return 0;

@@ -6,6 +6,7 @@
 #define BASESCENE_H
 
 #include "raylib.h"
+#include <string>
 
 class BaseScene {
 public:
@@ -13,6 +14,9 @@ public:
     virtual ~BaseScene();
     virtual void draw();
     virtual int update(int count);
+    void writeFile(const std::string& filepath, const std::string& contents);
+    std::string readFile(const std::string& filepath);
+    bool exists(const std::string& name);
     Font gameFont{};
 };
 

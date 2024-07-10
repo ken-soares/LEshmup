@@ -4,20 +4,41 @@
 
 #include "Scene.h"
 
-#include <utility>
 #include "patterns.h"
 #include "raymath.h"
 #include <iostream>
+#include <utility>
 
-void Scene::drawHUD(const Player &player) const {
+#include <string>
+
+
+void Scene::drawHUD() const {
     DrawRectangle(0, 0, screenWidth, 50, {0, 0, 0, 200});
 
-    DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 20}, GREEN, GREEN,
-                            DARKGREEN, DARKGREEN);
+    switch(player.getHealth()) {
+        case 1:
+            DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 20}, ORANGE, ORANGE,RED, RED);
+            break;
+        case 2:
+            DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 20}, GREEN, GREEN,ORANGE, ORANGE);
+            break;
+
+        case 3:
+            DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 20}, GREEN, GREEN,DARKGREEN, DARKGREEN);
+            break;
+    }
 
     DrawTextEx(gameFont,"Health" , {10, 10}, 20, gameFontSpacing, WHITE);
-    DrawTextEx(gameFont,"Score" , {screenWidth-450, 10}, 20, gameFontSpacing, WHITE);
-    DrawTextEx(gameFont,std::to_string(static_cast<int>(sceneScore)).c_str() , {screenWidth-350, 10}, 20, gameFontSpacing, WHITE);
+    DrawTextEx(gameFont,"Score" , {screenWidth-550, 10}, 20, gameFontSpacing, WHITE);
+    DrawTextEx(gameFont,std::to_string(static_cast<int>(sceneScore)).c_str() , {screenWidth-450, 10}, 20, gameFontSpacing, WHITE);
+
+    if(highScore < sceneScore) {
+        DrawTextEx(gameFont,"Hi-Score" , {screenWidth-300, 10}, 20, gameFontSpacing, YELLOW);
+        DrawTextEx(gameFont,std::to_string(static_cast<int>(sceneScore)).c_str() , {screenWidth-175, 10}, 20, gameFontSpacing, YELLOW);
+    } else {
+        DrawTextEx(gameFont,"Hi-Score" , {screenWidth-300, 10}, 20, gameFontSpacing, WHITE);
+        DrawTextEx(gameFont,std::to_string(static_cast<int>(highScore)).c_str() , {screenWidth-175, 10}, 20, gameFontSpacing, WHITE);
+    }
 }
 
 
@@ -28,7 +49,7 @@ void Scene::drawDebugInfo() const {
     DrawFPS(screenWidth - 100, screenHeight-30);
 }
 
-Scene::Scene(std::string bg_path, const std::list<enemyDef> &lp) : BaseScene(), background(std::move(bg_path)) {
+Scene::Scene([[maybe_unused]] std::string filepath, const std::list<enemyDef> &lp) : BaseScene(), background(std::move(filepath)){
     // chargement des textures des ennemis
     enemySprites[0] = LoadTexture("../res/one.png");
     enemySprites[1] = LoadTexture("../res/two.png");
@@ -37,7 +58,11 @@ Scene::Scene(std::string bg_path, const std::list<enemyDef> &lp) : BaseScene(), 
     listSpawn = lp;
 
     isDebugInfoVisible = false;
-    sceneScore = 0;
+
+    sceneScore = std::stod(readFile("../res/temp.save"));
+    highScore = std::stod(readFile("../res/high.save"));
+
+    std::cout << readFile("../res/temp.save") << std::endl;
 }
 
 Scene::~Scene() = default;
@@ -46,7 +71,7 @@ Scene::~Scene() = default;
 int Scene::update(const int nextSceneCount) {
 
     if(IsKeyPressed(KEY_F3)) {
-        isDebugInfoVisible = isDebugInfoVisible != true;
+        isDebugInfoVisible = !isDebugInfoVisible;
     }
 
 
@@ -121,7 +146,7 @@ int Scene::update(const int nextSceneCount) {
         if(!player.wasShot && ((player.getHitBoxVec().x >= e->getPos().x && player.getHitBoxVec().x <= e->getPos().x + static_cast<float>(enemySprites[e->def.spriteID].
                      width)) && (player.getHitBoxVec().y >= e->getPos().y && player.getHitBoxVec().y <= e->getPos().y + static_cast<float>(enemySprites[e->def.spriteID].
                      height)))) {
-            std::cout << "Player hit an ennemy" << std::endl;
+            std::cout << "Player hit an enemy" << std::endl;
             player.setHealth(player.getHealth() - 1);
             player.wasShot = true;
         }
@@ -139,6 +164,7 @@ int Scene::update(const int nextSceneCount) {
 
 
     if (player.getHealth() > 0 && listSpawn.empty() && listEnemies.empty()) {
+        writeFile("../res/temp.save", std::to_string(sceneScore));
         return nextSceneCount + 1;
     }
     return nextSceneCount;
@@ -200,9 +226,14 @@ void Scene::draw() {
 
         DrawTextEx(gameFont,"GAME OVER" , {static_cast<int>(screenWidth / 2.48f), screenHeight / 1.98f}, 45, gameFontSpacing, BLACK);
         DrawTextEx(gameFont,"GAME OVER" , {static_cast<int>(screenWidth / 2.5f), screenHeight / 2.0f}, 45, gameFontSpacing, WHITE);
+
+        if(sceneScore > highScore) {
+            std::cout << "wrote highscore " << sceneScore << std::endl;
+            writeFile("../res/high.save", std::to_string(static_cast<int>(sceneScore)));
+        }
     }
 
 
 
-    drawHUD(player);
+    drawHUD();
 }
