@@ -54,11 +54,13 @@ int MainMenu::update(int _count) {
     if(IsKeyPressed(KEY_ENTER) && select == PLAY) {
 
         // vérification premier lancement du jeu
-        if(!exists("../res/high.save")) {
-            writeFile("../res/high.save", "0");
+        if(!exists("../res/save/high.save")) {
+            writeFile("../res/save/high.save", "0");
         }
 
-        writeFile("../res/temp.save", "0");
+        writeFile("../res/temp/score.temp", "0");
+        writeFile("../res/temp/lives.temp", "3");
+        writeFile("../res/temp/bombs.temp", "3");
 
         return 1;
     } else {

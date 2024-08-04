@@ -19,6 +19,9 @@ public:
     void setHealth(int value);
     [[nodiscard]] int getHealth() const;
 
+    void setBombs(int value);
+    [[nodiscard]] int getBombs() const;
+
     [[nodiscard]] bool getShowHitBox() const;
     void setShowHitBox(bool value);
     void setPosition(Vector2 value);
@@ -41,6 +44,7 @@ private:
     Texture2D playerTexture{};
     int numFrames;
     int health;
+    int bombs;
     bool showHitBox;
     int playerTextureSize;
 };

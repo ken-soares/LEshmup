@@ -9,13 +9,12 @@
 #include "Scene.h"
 #include <iostream>
 
-// TODO: Faire en sorte que les vies du joueurs ne se reset pas d'un stage à l'autre
+// DONE: Faire en sorte que les vies du joueurs ne se reset pas d'un stage à l'autre
+// DONE: IMPLÉMENTER UN SYSTEME DE BOMBES
 
-
-/* feuille de route :
- on va commencer par mettre le score par niveau avec un int dans la classe Scene
- ensuite, on créera une structure de retour pour update
-*/
+// TODO: SYSTEME DE SON
+// TODO: REFAIRE L'ART
+// TODO: VOIR COMMENT FONCTIONNENT LES SHADERS ET EN APPLIQUER AUX BOMBES POUR FAIRE UN EFFET DE TREMBLEMENT
 
 std::list<enemyDef> listSpawn1 = {
     {60.0, 2, 3.0f, 0.5f, move_fast, fire_none},

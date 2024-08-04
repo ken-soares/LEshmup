@@ -28,16 +28,21 @@ void Scene::drawHUD() const {
             break;
     }
 
+
     DrawTextEx(gameFont,"Health" , {10, 10}, 20, gameFontSpacing, WHITE);
-    DrawTextEx(gameFont,"Score" , {screenWidth-550, 10}, 20, gameFontSpacing, WHITE);
-    DrawTextEx(gameFont,std::to_string(static_cast<int>(sceneScore)).c_str() , {screenWidth-450, 10}, 20, gameFontSpacing, WHITE);
+    DrawTextEx(gameFont,"Score" , {screenWidth-500, 10}, 20, gameFontSpacing, WHITE);
+    DrawTextEx(gameFont,std::to_string(static_cast<int>(sceneScore)).c_str() , {screenWidth-430, 10}, 20, gameFontSpacing, WHITE);
 
     if(highScore < sceneScore) {
-        DrawTextEx(gameFont,"Hi-Score" , {screenWidth-300, 10}, 20, gameFontSpacing, YELLOW);
-        DrawTextEx(gameFont,std::to_string(static_cast<int>(sceneScore)).c_str() , {screenWidth-175, 10}, 20, gameFontSpacing, YELLOW);
+        DrawTextEx(gameFont,"Hi-Score" , {screenWidth-350, 10}, 20, gameFontSpacing, YELLOW);
+        DrawTextEx(gameFont,std::to_string(static_cast<int>(sceneScore)).c_str() , {screenWidth-240, 10}, 20, gameFontSpacing, YELLOW);
     } else {
-        DrawTextEx(gameFont,"Hi-Score" , {screenWidth-300, 10}, 20, gameFontSpacing, WHITE);
-        DrawTextEx(gameFont,std::to_string(static_cast<int>(highScore)).c_str() , {screenWidth-175, 10}, 20, gameFontSpacing, WHITE);
+        DrawTextEx(gameFont,"Hi-Score" , {screenWidth-350, 10}, 20, gameFontSpacing, WHITE);
+        DrawTextEx(gameFont,std::to_string(static_cast<int>(highScore)).c_str() , {screenWidth-240, 10}, 20, gameFontSpacing, WHITE);
+    }
+
+    for(int i = 0; i < player.getBombs(); i++) {
+        DrawRectangle(610 + (i * 40),15,20,10,RED);
     }
 }
 
@@ -55,14 +60,17 @@ Scene::Scene([[maybe_unused]] std::string filepath, const std::list<enemyDef> &l
     enemySprites[1] = LoadTexture("../res/two.png");
     enemySprites[2] = LoadTexture("../res/three.png");
 
+    player.setHealth(std::stoi(readFile("../res/temp/lives.temp")));
+    player.setBombs(std::stoi(readFile("../res/temp/bombs.temp")));
+
     listSpawn = lp;
 
     isDebugInfoVisible = false;
 
-    sceneScore = std::stod(readFile("../res/temp.save"));
-    highScore = std::stod(readFile("../res/high.save"));
+    sceneScore = std::stod(readFile("../res/temp/score.temp"));
+    highScore = std::stod(readFile("../res/save/high.save"));
 
-    std::cout << readFile("../res/temp.save") << std::endl;
+    std::cout << readFile("../res/temp/score.temp") << std::endl;
 }
 
 Scene::~Scene() = default;
@@ -72,6 +80,38 @@ int Scene::update(const int nextSceneCount) {
 
     if(IsKeyPressed(KEY_F3)) {
         isDebugInfoVisible = !isDebugInfoVisible;
+    }
+
+    if(IsKeyPressed(KEY_X) && player.getBombs() > 0) {
+        listBullets.clear();
+        player.setBombs(player.getBombs() - 1);
+        for (auto &e: listEnemies) {
+            e->def.health -= 3;
+            if(e->def.health <= 0) {
+                for (int i = 0; i < 200; i++) {
+                    // coordonnées polaires du vecteur de chaque particule
+                    float fAngle = (float) (static_cast<float>(dist100(rng)) / 100) * 2 * PI;
+                    float fVel = (float) (static_cast<float>(dist100(rng)) / 100) * 2.0f + 5.0f;
+
+                    listParticles.push_back(Particle{
+                            false, Vector2Add(e->getPos(), Vector2{24.0f, 24.0f}),
+                            {fVel * cosf(fAngle), fVel * sinf(fAngle)}, 0, (Color){253, 249, 0, 255}
+                    });
+                }
+            }
+
+            // uniquement les ennemis avec un vrai timer et pas celui par défaut
+            // aka les boss etc.
+            if(e->def.timer < 9000.0f) {
+                if(e->def.timer - 500 * sceneSpeed < 0.0f) {
+                   scenePosition += e->def.timer;
+                   e->def.timer = 0;
+                } else {
+                    e->def.timer -= 500 * sceneSpeed;
+                    scenePosition += 500 * sceneSpeed;
+                }
+            }
+        }
     }
 
 
@@ -164,7 +204,9 @@ int Scene::update(const int nextSceneCount) {
 
 
     if (player.getHealth() > 0 && listSpawn.empty() && listEnemies.empty()) {
-        writeFile("../res/temp.save", std::to_string(sceneScore));
+        writeFile("../res/temp/score.temp", std::to_string(sceneScore));
+        writeFile("../res/temp/lives.temp", std::to_string(player.getHealth()));
+        writeFile("../res/temp/bombs.temp", std::to_string(player.getBombs()));
         return nextSceneCount + 1;
     }
     return nextSceneCount;
@@ -229,11 +271,9 @@ void Scene::draw() {
 
         if(sceneScore > highScore) {
             std::cout << "wrote highscore " << sceneScore << std::endl;
-            writeFile("../res/high.save", std::to_string(static_cast<int>(sceneScore)));
+            writeFile("../res/save/high.save", std::to_string(static_cast<int>(sceneScore)));
         }
     }
-
-
 
     drawHUD();
 }

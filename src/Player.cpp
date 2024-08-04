@@ -12,6 +12,7 @@ Player::Player() {
     playerTextureSize = playerTexture.width / numFrames;
     frameRect = {0.0f, 0.0f, static_cast<float>(playerTextureSize), static_cast<float>(playerTexture.height)};
     health = 3;
+    bombs = 3;
     showHitBox = false;
     gunReloadTimer = 0;
     gunReloadDelay = 0.2f;
@@ -111,6 +112,14 @@ int Player::getHealth() const {
 
 void Player::setHealth(int value) {
     health = value;
+}
+
+int Player::getBombs() const {
+    return bombs;
+}
+
+void Player::setBombs(int value) {
+    bombs = value;
 }
 
 bool Player::getShowHitBox() const {
