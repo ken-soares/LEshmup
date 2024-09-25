@@ -8,7 +8,7 @@
 #include "BaseScene.h"
 #include "raylib.h"
 
-class MainMenu final : public BaseScene{
+class MainMenu final : public BaseScene {
 
 public:
 
@@ -31,6 +31,7 @@ private:
     int playCenter = 0;
     int fullCenter = 0;
     int quitCenter = 0;
+    int optCenter = 0;
 };
 
 #endif //MAINMENU_H

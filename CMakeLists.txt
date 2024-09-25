@@ -45,6 +45,8 @@ add_executable(${PROJECT_NAME}
         src/MainMenu.h
         src/BaseScene.cpp
         src/BaseScene.h
+        src/OptionMenu.cpp
+        src/OptionMenu.h
 )
 
 #set(raylib_VERBOSE 1)

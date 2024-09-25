@@ -11,6 +11,7 @@
 enum Option {
     PLAY = 0,
     FULLSCREEN,
+    OPT,
     QUIT,
 };
 
@@ -23,6 +24,7 @@ MainMenu::MainMenu() : BaseScene(){
 
     playCenter = static_cast<int>(screenWidth/2.0f - (MeasureTextEx(gameFont, "Play", gameNameSize, gameFontSpacing).x)/2.0f);
     fullCenter = static_cast<int>(screenWidth/2.0f - (MeasureTextEx(gameFont, "Fullscreen", gameNameSize, gameFontSpacing).x)/2.0f);
+    optCenter = static_cast<int>(screenWidth/2.0f - (MeasureTextEx(gameFont, "Options", gameNameSize, gameFontSpacing).x)/2.0f);
     quitCenter = static_cast<int>(screenWidth/2.0f - (MeasureTextEx(gameFont, "Quit", gameNameSize, gameFontSpacing).x)/2.0f);
 }
 
@@ -51,6 +53,10 @@ int MainMenu::update(int _count) {
         return -1;
     }
 
+    if(IsKeyPressed(KEY_ENTER) && select == OPT) {
+        return Ecrans::OPTIONS;
+    }
+
     if(IsKeyPressed(KEY_ENTER) && select == PLAY) {
 
         // vérification premier lancement du jeu
@@ -62,9 +68,9 @@ int MainMenu::update(int _count) {
         writeFile("../res/temp/lives.temp", "3");
         writeFile("../res/temp/bombs.temp", "3");
 
-        return 1;
+        return Ecrans::LV1;
     } else {
-        return 0;
+        return Ecrans::MENU;
     }
 }
 
@@ -82,14 +88,20 @@ void MainMenu::draw() {
     }
 
     if(select == FULLSCREEN) {
-        DrawTextEx(gameFont, "> Fullscreen <", {static_cast<float>(fullCenter) + 15.0f, 400}, menuItemSize, gameFontSpacing, (Color){153, 230, 0, 255});
+        DrawTextEx(gameFont, "> Fullscreen <", {static_cast<float>(fullCenter) + 15.0f, 350}, menuItemSize, gameFontSpacing, (Color){153, 230, 0, 255});
     } else {
-        DrawTextEx(gameFont, "Fullscreen", {static_cast<float>(fullCenter) + OFFSET + 15.0f, 400}, menuItemSize, gameFontSpacing, WHITE);
+        DrawTextEx(gameFont, "Fullscreen", {static_cast<float>(fullCenter) + OFFSET + 15.0f, 350}, menuItemSize, gameFontSpacing, WHITE);
+    }
+
+    if(select == OPT) {
+        DrawTextEx(gameFont, "> Options <", {static_cast<float>(optCenter), 400}, menuItemSize, gameFontSpacing, (Color){153, 230, 0, 255});
+    } else {
+        DrawTextEx(gameFont, "Options", {static_cast<float>(optCenter) + OFFSET, 400}, menuItemSize, gameFontSpacing, WHITE);
     }
 
     if(select == QUIT) {
-        DrawTextEx(gameFont, "> Quit <", {static_cast<float>(quitCenter), 500}, menuItemSize, gameFontSpacing, (Color){153, 230, 0, 255});
+        DrawTextEx(gameFont, "> Quit <", {static_cast<float>(quitCenter), 450}, menuItemSize, gameFontSpacing, (Color){153, 230, 0, 255});
     } else {
-        DrawTextEx(gameFont, "Quit", {static_cast<float>(quitCenter) + OFFSET, 500}, menuItemSize, gameFontSpacing, WHITE);
+        DrawTextEx(gameFont, "Quit", {static_cast<float>(quitCenter) + OFFSET, 450}, menuItemSize, gameFontSpacing, WHITE);
     }
 }

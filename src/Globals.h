@@ -8,6 +8,7 @@
 #include "raylib.h"
 
 #define KILL_SCORE 150
+#define HITBOX_OFFSET_Y 20
 
 constexpr int screenWidth = 1280;
 constexpr int screenHeight = 720;
@@ -26,6 +27,7 @@ enum Ecrans {
     LV4,
     LV5,
     SCOREBOARD,
+    OPTIONS,
 };
 
 enum BulletType {

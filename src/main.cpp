@@ -4,6 +4,7 @@
 
 #include "Globals.h"
 #include "MainMenu.h"
+#include "OptionMenu.h"
 #include "raylib.h"
 #include "patterns.h"
 #include "Scene.h"
@@ -12,6 +13,7 @@
 // DONE: Faire en sorte que les vies du joueurs ne se reset pas d'un stage à l'autre
 // DONE: IMPLÉMENTER UN SYSTEME DE BOMBES
 
+// TODO: RETIRER LE CRASH DES OPTIONS
 // TODO: SYSTEME DE SON
 // TODO: REFAIRE L'ART
 // TODO: VOIR COMMENT FONCTIONNENT LES SHADERS ET EN APPLIQUER AUX BOMBES POUR FAIRE UN EFFET DE TREMBLEMENT
@@ -30,8 +32,19 @@ std::list<enemyDef> listSpawn1 = {
     {9300.0, 0, 100.0f, 0.5f, set_third, fire_SpiralReverse02, 5000.0},
 };
 
-std::shared_ptr<Scene> SwitchScenes(const int count) {
+std::shared_ptr<BaseScene> SwitchScenes(const int count) {
     switch (count) {
+        case Ecrans::MENU:
+            std::cout << "changed scene count:" << count << std::endl;
+            return std::make_shared<MainMenu>();
+        case Ecrans::LV1:
+            std::cout << "changed scene count:" << count << std::endl;
+            return std::make_shared<Scene>("../res/background.png", listSpawn1);
+
+        case Ecrans::OPTIONS:
+            std::cout << "changed scene count:" << count << std::endl;
+            return std::make_shared<OptionMenu>();
+
         default:
             std::cout << "changed scene count:" << count << std::endl;
             return std::make_shared<Scene>("../res/background.png", listSpawn1);
