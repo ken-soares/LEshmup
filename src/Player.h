@@ -43,6 +43,9 @@ private:
     float playerSpeed;
     Texture2D playerTexture{};
     int numFrames;
+    int frameCount;
+    float animTimer;
+    float animDelay;
     int health;
     int bombs;
     bool showHitBox;

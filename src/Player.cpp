@@ -3,12 +3,14 @@
 //
 
 #include "Player.h"
+#include <iostream>
 
 Player::Player() {
     playerPosition = {40, static_cast<float>(screenHeight) / 2};
     playerSpeed = 10.0f;
-    playerTexture = LoadTexture("../res/character.png");
-    numFrames = 4;
+    playerTexture = LoadTexture("../res/tiles.png");
+    numFrames = 2;
+    frameCount = 0;
     playerTextureSize = playerTexture.width / numFrames;
     frameRect = {0.0f, 0.0f, static_cast<float>(playerTextureSize), static_cast<float>(playerTexture.height)};
     health = 3;
@@ -16,6 +18,8 @@ Player::Player() {
     showHitBox = false;
     gunReloadTimer = 0;
     gunReloadDelay = 0.2f;
+    animTimer = 0.0f;
+    animDelay = 0.5f;
 
     immuneDelay = 1.5f;
     immuneTimer = 0.0f;
@@ -31,8 +35,8 @@ void Player::draw() const {
         DrawTextureRec(playerTexture, frameRect, playerPosition, RED);
     }
     if(showHitBox){
-        DrawCircle(static_cast<int>(playerPosition.x + static_cast<float>(playerTextureSize) / 2), static_cast<int>(playerPosition.y + 105), 8.0f, RED);
-        DrawCircle(static_cast<int>(playerPosition.x + static_cast<float>(playerTextureSize) / 2), static_cast<int>(playerPosition.y + 105), 5.0f, ORANGE);
+        DrawCircle(static_cast<int>(playerPosition.x + static_cast<float>(playerTextureSize) / 2), static_cast<int>(playerPosition.y + HITBOX_OFFSET_Y + static_cast<float>(playerTextureSize) / 2), 8.0f, RED);
+        DrawCircle(static_cast<int>(playerPosition.x + static_cast<float>(playerTextureSize) / 2), static_cast<int>(playerPosition.y + HITBOX_OFFSET_Y + static_cast<float>(playerTextureSize) / 2), 5.0f, ORANGE);
     }
 
 }
@@ -59,6 +63,18 @@ void Player::update() {
         setShowHitBox(false);
     }
 
+
+    // animation du joueur
+    animTimer += GetFrameTime();
+
+    std::cout << frameCount << "|" << animTimer << std::endl;
+
+    if(animTimer >= animDelay) {
+        frameCount++;
+        frameCount = frameCount % (numFrames); // wrapping around
+        frameRect.x = static_cast<float>(frameCount) * 128.0f;
+        animTimer = 0.0f;
+    }
 
     // mécanique de tir
     bool canFire = false;
@@ -139,5 +155,5 @@ void Player::setPosition(Vector2 value) {
 }
 
 Vector2 Player::getHitBoxVec() const {
-    return Vector2 {playerPosition.x + static_cast<float>(playerTextureSize)/2, playerPosition.y+105};
+    return Vector2 {playerPosition.x + static_cast<float>(playerTextureSize)/2, playerPosition.y + HITBOX_OFFSET_Y + static_cast<float>(playerTextureSize)/2};
 }

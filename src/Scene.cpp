@@ -142,7 +142,7 @@ int Scene::update(const int nextSceneCount) {
     for (auto &b: listBullets) {
         b.pos = Vector2Add(b.pos, b.vel);
 
-        if (!player.wasShot && Vector2Length(Vector2Subtract(b.pos, player.getHitBoxVec())) < 4 * 4) {
+        if (!player.wasShot && Vector2Length(Vector2Subtract(b.pos, player.getHitBoxVec())) < 3 * 3) {
             std::cout << "Player was shot" << std::endl;
             b.remove = true;
             player.setHealth(player.getHealth() - 1);
