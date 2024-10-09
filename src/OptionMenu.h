@@ -16,6 +16,11 @@ public:
     int select;
 
 private:
+    int optionCounter;
+
+    int bombVals;
+    int speedVals;
+    int shotVals;
 
     int textSize;
     float xCenterText;
