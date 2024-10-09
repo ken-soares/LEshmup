@@ -1,4 +1,4 @@
-# ENGINE DESIGN DOCUMENT 
+# Engine Design Document (OUTDATED)
 __This document is not a GDD (Game Design Document)__
 hence, no information about lore, characters and specific mechanics about a game will be given.
 The aim of this document is to allow anyone to pick up the source code and hack together some scenes to make
