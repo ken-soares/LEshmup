@@ -23,6 +23,12 @@ public:
     bool canPlay = false;
     int select;
 
+
+    // animation
+    Texture2D femiTex{};
+    float femiAnimRate;
+    int animDir;
+
 private:
 
     int textSize;

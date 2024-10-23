@@ -17,6 +17,9 @@ enum Option {
 
 MainMenu::MainMenu() : BaseScene(){
     select = 0;
+    femiTex = LoadTexture("../res/redesign/naf0.png");
+    animDir = 1;
+    femiAnimRate = 0.0f;
 
     textSize = static_cast<int>(MeasureTextEx(gameFont, "Game Name", gameNameSize, gameFontSpacing).x);
     xCenterText = static_cast<float>(screenWidth/2.0f - (static_cast<float>(textSize)/2.0f));
@@ -31,6 +34,13 @@ MainMenu::MainMenu() : BaseScene(){
 MainMenu::~MainMenu() = default;
 
 int MainMenu::update(int _count) {
+
+    femiAnimRate += GetFrameTime();
+
+    if(femiAnimRate >= 0.5f) {
+        femiAnimRate = 0.0f;
+        animDir *= (-1);
+    }
 
     if(IsKeyPressed(KEY_DOWN)) {
         select++;
@@ -79,7 +89,9 @@ void MainMenu::draw() {
     ClearBackground(BLACK);
 
     DrawTextEx(gameFont, "Game Name", {xCenterText, 100}, gameNameSize, gameFontSpacing, (Color)PURPLE);
-    DrawTextEx(gameFont, "A game by Torrent", {screenWidth - 250.0f, screenHeight-50.0f}, 20, gameFontSpacing, (Color)WHITE);
+    DrawTextEx(gameFont, "A game by Torrent", {screenWidth - 380.0f, screenHeight-50.0f}, 24, gameFontSpacing, (Color)WHITE);
+
+    DrawTextureEx(femiTex, {screenWidth - 150.0f, screenHeight - 130.0f + static_cast<float>(animDir) * femiAnimRate * 6}, 0, 4, WHITE);
 
     if(select == PLAY) {
         DrawTextEx(gameFont, "> Play <", {static_cast<float>(playCenter), 300}, menuItemSize, gameFontSpacing, (Color){153, 230, 0, 255});
