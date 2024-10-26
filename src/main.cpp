@@ -10,12 +10,10 @@
 #include "Scene.h"
 #include <iostream>
 
-// DONE: Faire en sorte que les vies du joueurs ne se reset pas d'un stage à l'autre
-// DONE: IMPLÉMENTER UN SYSTEME DE BOMBES
-// DONE: RETIRER LE CRASH DES OPTIONS
+// DONE : Faire en sorte que les vies du joueur ne se reset pas d'un stage à l'autre
 
 // TODO: IMPLÉMENTER LE CHOIX DES OPTIONS
-// TODO: SYSTEME DE SON
+// TODO: SYSTÈME DE SON
 // TODO: REFAIRE L'ART
 // TODO: VOIR COMMENT FONCTIONNENT LES SHADERS ET EN APPLIQUER AUX BOMBES POUR FAIRE UN EFFET DE TREMBLEMENT
 
@@ -40,7 +38,7 @@ std::shared_ptr<BaseScene> SwitchScenes(const int count) {
             return std::make_shared<MainMenu>();
         case Ecrans::LV1:
             std::cout << "changed scene count:" << count << std::endl;
-            return std::make_shared<Scene>("../res/background.png", listSpawn1);
+            return std::make_shared<Scene>("../res/redesign/lv1.png", listSpawn1);
 
         case Ecrans::OPTIONS:
             std::cout << "changed scene count:" << count << std::endl;
@@ -48,7 +46,7 @@ std::shared_ptr<BaseScene> SwitchScenes(const int count) {
 
         default:
             std::cout << "changed scene count:" << count << std::endl;
-            return std::make_shared<Scene>("../res/background.png", listSpawn1);
+            return std::make_shared<Scene>("../res/redesign/lv1.png", listSpawn1);
     }
 }
 
@@ -64,6 +62,7 @@ int main() {
         int nextSceneCount;
         std::shared_ptr<BaseScene> currScene = std::make_shared<MainMenu>();
         SetTargetFPS(60);
+        SetConfigFlags(FLAG_MSAA_4X_HINT);      // Enable Multi Sampling Anti Aliasing 4x (if available)
 
         if (!IsCursorHidden()) {
             HideCursor();

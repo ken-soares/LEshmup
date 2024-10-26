@@ -8,7 +8,8 @@
 #include "raylib.h"
 
 #define KILL_SCORE 150
-#define HITBOX_OFFSET_Y 20
+#define HITBOX_OFFSET_Y 10
+#define TEXTURE_OFFSET_X -20
 
 constexpr int screenWidth = 1280;
 constexpr int screenHeight = 720;

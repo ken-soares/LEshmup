@@ -8,10 +8,10 @@
 Player::Player() {
     playerPosition = {40, static_cast<float>(screenHeight) / 2};
     playerSpeed = 10.0f;
-    playerTexture = LoadTexture("../res/tiles.png");
+    playerTexture = LoadTexture("../res/redesign/perso_spritesheet_r.png");
     numFrames = 2;
     frameCount = 0;
-    playerTextureSize = playerTexture.width / numFrames;
+    playerTextureSize = (playerTexture.width + TEXTURE_OFFSET_X) / numFrames;
     frameRect = {0.0f, 0.0f, static_cast<float>(playerTextureSize), static_cast<float>(playerTexture.height)};
     health = 3;
     bombs = 3;

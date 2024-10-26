@@ -91,7 +91,7 @@ void MainMenu::draw() {
     DrawTextEx(gameFont, "Game Name", {xCenterText, 100}, gameNameSize, gameFontSpacing, (Color)PURPLE);
     DrawTextEx(gameFont, "A game by Torrent", {screenWidth - 380.0f, screenHeight-50.0f}, 24, gameFontSpacing, (Color)WHITE);
 
-    DrawTextureEx(femiTex, {screenWidth - 150.0f, screenHeight - 130.0f + static_cast<float>(animDir) * femiAnimRate * 6}, 0, 4, WHITE);
+    DrawTextureEx(femiTex, {screenWidth - 150.0f, screenHeight - 130.0f + static_cast<float>(animDir) * femiAnimRate * 6}, 0, 1.5, WHITE);
 
     if(select == PLAY) {
         DrawTextEx(gameFont, "> Play <", {static_cast<float>(playCenter), 300}, menuItemSize, gameFontSpacing, (Color){153, 230, 0, 255});
