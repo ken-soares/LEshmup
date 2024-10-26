@@ -10,13 +10,14 @@
 
 class Background {
 public:
-    [[maybe_unused]] explicit Background(std::string filepath);
+    [[maybe_unused]] explicit Background(const std::string& filepath);
     ~Background();
     void update();
     void draw();
 private:
     float scrollback;
     Texture2D background{};
+    Shader grayscale{};
 };
 
 

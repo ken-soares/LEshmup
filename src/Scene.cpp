@@ -7,7 +7,6 @@
 #include "patterns.h"
 #include "raymath.h"
 #include <iostream>
-#include <utility>
 
 #include <string>
 
@@ -54,10 +53,11 @@ void Scene::drawDebugInfo() const {
     DrawFPS(screenWidth - 100, screenHeight-30);
 }
 
-Scene::Scene([[maybe_unused]] std::string filepath, const std::list<enemyDef> &lp) : BaseScene(), background(std::move(filepath)){
+Scene::Scene([[maybe_unused]] const std::string& filepath, const std::list<enemyDef> &lp) : BaseScene(), background(filepath){
+
     // chargement des textures des ennemis
     enemySprites[0] = LoadTexture("../res/one.png");
-    enemySprites[1] = LoadTexture("../res/two.png");
+    enemySprites[1] = LoadTexture("../res/redesign/naf0.png");
     enemySprites[2] = LoadTexture("../res/three.png");
 
     player.setHealth(std::stoi(readFile("../res/temp/lives.temp")));
@@ -71,6 +71,10 @@ Scene::Scene([[maybe_unused]] std::string filepath, const std::list<enemyDef> &l
     highScore = std::stod(readFile("../res/save/high.save"));
 
     std::cout << readFile("../res/temp/score.temp") << std::endl;
+
+    bloom = LoadShader(nullptr, "../res/shaders/sobel.frag");
+    outer_glow = LoadShader(nullptr, "../res/shaders/outer_glow.frag");
+    target = LoadRenderTexture(screenWidth, screenHeight);
 }
 
 Scene::~Scene() = default;
@@ -101,7 +105,7 @@ int Scene::update(const int nextSceneCount) {
             }
 
             // uniquement les ennemis avec un vrai timer et pas celui par défaut
-            // aka les boss etc.
+            // aka les boss, etc.
             if(e->def.timer < 9000.0f) {
                 if(e->def.timer - 500 * sceneSpeed < 0.0f) {
                    scenePosition += e->def.timer;
@@ -214,6 +218,7 @@ int Scene::update(const int nextSceneCount) {
 
 void Scene::draw() {
     ClearBackground(BLACK);
+
     background.draw();
     player.draw();
 
@@ -224,6 +229,8 @@ void Scene::draw() {
     // affichage des tirs
 
     // tirs des ennemis
+    BeginTextureMode(target);
+    ClearBackground(BLANK);
     for (auto &b: listBullets) {
         switch (b.type) {
             case BULLET_LONG:
@@ -245,12 +252,6 @@ void Scene::draw() {
         DrawEllipse(static_cast<int>(b.pos.x), static_cast<int>(b.pos.y), 15.0f, 5.0f, SKYBLUE);
     }
 
-    // affichage de la texture de chaque ennemi
-    for (auto &e: listEnemies) {
-        DrawTexture(enemySprites[e->def.spriteID], static_cast<int>(e->getPos().x), static_cast<int>(e->getPos().y),
-                    WHITE);
-    }
-
     // affichage des particules d'explosion
     for (auto &p: listParticles) {
         DrawEllipse(static_cast<int>(p.pos.x), static_cast<int>(p.pos.y), 3.0f, 3.0f, p.color);
@@ -259,6 +260,18 @@ void Scene::draw() {
         p.vel.x /= 1.05f;
         p.vel.y /= 1.05f;
         p.color.a -= 5;
+    }
+    EndTextureMode();
+
+    BeginShaderMode(bloom);
+    DrawTextureRec(target.texture, (Rectangle){0,0,(float)target.texture.width, (float)-target.texture.height}, (Vector2){0,0}, WHITE);
+    EndShaderMode();
+
+
+    // affichage de la texture de chaque ennemi
+    for (auto &e: listEnemies) {
+        DrawTexture(enemySprites[e->def.spriteID], static_cast<int>(e->getPos().x), static_cast<int>(e->getPos().y),
+                    WHITE);
     }
 
     if (!player.getHealth()) {
@@ -270,7 +283,7 @@ void Scene::draw() {
         DrawTextEx(gameFont,"GAME OVER" , {static_cast<int>(screenWidth / 2.5f), screenHeight / 2.0f}, 45, gameFontSpacing, WHITE);
 
         if(sceneScore > highScore) {
-            std::cout << "wrote highscore " << sceneScore << std::endl;
+            std::cout << "wrote high score " << sceneScore << std::endl;
             writeFile("../res/save/high.save", std::to_string(static_cast<int>(sceneScore)));
         }
     }

@@ -5,9 +5,10 @@
 #include "Background.h"
 
 [[maybe_unused]]
-Background::Background(std::string filepath) {
+Background::Background(const std::string& filepath) {
     scrollback = 0.0f;
     background = LoadTexture(filepath.c_str());
+    grayscale = LoadShader(nullptr, "../res/shaders/dream_vision.frag");
 }
 
 Background::~Background() = default;
@@ -20,7 +21,10 @@ void Background::update() {
 }
 
 void Background::draw() {
-    DrawTextureEx(background, (Vector2){scrollback, 0}, 0.0f, 1.0f, WHITE);
-    DrawTextureEx(background, (Vector2){(float) background.width + scrollback, 0}, 0.0f,
-                  1.0f, WHITE);
+
+    BeginShaderMode(grayscale);
+        DrawTextureEx(background, (Vector2){scrollback, 0}, 0.0f, 1.0f, WHITE);
+        DrawTextureEx(background, (Vector2){(float) background.width + scrollback, 0}, 0.0f,
+                      1.0f, WHITE);
+    EndShaderMode();
 }

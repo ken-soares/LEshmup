@@ -16,7 +16,7 @@
 
 class Scene final : public BaseScene {
 public:
-    explicit Scene([[maybe_unused]] std::string filepath, const std::list<enemyDef>& lp);
+    explicit Scene([[maybe_unused]] const std::string& filepath, const std::list<enemyDef>& lp);
 
     ~Scene() override;
 
@@ -52,6 +52,9 @@ public:
 private:
     Texture2D enemySprites[3]{};
     Background background;
+    Shader bloom{};
+    Shader outer_glow{};
+    RenderTexture2D target{};
 };
 
 
