@@ -2,5 +2,6 @@ cmake-build-debug/
 res/bordel
 res/redesign
 res/temp
+res/save
 res/*.ttf
 .idea/
