@@ -50,11 +50,22 @@ public:
     double highScore;
 
 private:
+    void StartScreenShake();
+    void UpdateScreenShake();
     Texture2D enemySprites[3]{};
     Background background;
     Shader bloom{};
     Shader outer_glow{};
+    Shader shake{};
+    float shakeIntensity = 0.0f;
+    const float maxShakeIntensity = 0.02f;
+    bool shaking = false;
     RenderTexture2D target{};
+
+    float shakeMagnitude;
+    float shakeDuration;
+    float shakeTimeLeft;
+    Vector2 shakeOffset{};
 };
 
 

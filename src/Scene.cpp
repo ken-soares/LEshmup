@@ -7,6 +7,7 @@
 #include "patterns.h"
 #include "raymath.h"
 #include <iostream>
+#include "rlgl.h"
 
 #include <string>
 
@@ -55,6 +56,14 @@ void Scene::drawDebugInfo() const {
 
 Scene::Scene([[maybe_unused]] const std::string& filepath, const std::list<enemyDef> &lp) : BaseScene(), background(filepath){
 
+    // variables nécessaires au screen shake
+    shakeMagnitude = 0.0f;
+    shakeDuration = 0.0f;
+    shakeTimeLeft = 0.0f;
+
+    shakeOffset.x = 0.0f;
+    shakeOffset.y = 0.0f;
+
     // chargement des textures des ennemis
     enemySprites[0] = LoadTexture("../res/one.png");
     enemySprites[1] = LoadTexture("../res/redesign/naf0.png");
@@ -80,13 +89,37 @@ Scene::Scene([[maybe_unused]] const std::string& filepath, const std::list<enemy
 Scene::~Scene() = default;
 
 
+void Scene::UpdateScreenShake() {
+    if (shakeTimeLeft > 0.0f) {
+        shakeTimeLeft -= GetFrameTime();
+
+        // Randomize the shake offset
+        shakeOffset.x = (static_cast<float>(dist100(rng))/100 * 2 - 1) * shakeMagnitude;
+        shakeOffset.y = (static_cast<float>(dist100(rng))/100  * 2 - 1) * shakeMagnitude;
+
+        // Gradually reduce the magnitude over time (ease out)
+        shakeMagnitude *= (shakeTimeLeft / shakeDuration);
+    } else {
+        // Reset the shake offset when the effect ends
+        shakeOffset = { 0.0f, 0.0f };
+    }
+}
+void Scene::StartScreenShake() {
+    shakeMagnitude = 13.0;
+    shakeDuration = 0.5;
+    shakeTimeLeft = 0.5;
+}
+
 int Scene::update(const int nextSceneCount) {
+
+    UpdateScreenShake();
 
     if(IsKeyPressed(KEY_F3)) {
         isDebugInfoVisible = !isDebugInfoVisible;
     }
 
     if(IsKeyPressed(KEY_X) && player.getBombs() > 0) {
+        StartScreenShake();
         listBullets.clear();
         player.setBombs(player.getBombs() - 1);
         for (auto &e: listEnemies) {
@@ -219,15 +252,19 @@ int Scene::update(const int nextSceneCount) {
 void Scene::draw() {
     ClearBackground(BLACK);
 
+
+    rlPushMatrix();
+    rlTranslatef(shakeOffset.x, shakeOffset.y, 0); // Apply shake offset
     background.draw();
-    player.draw();
 
     if(isDebugInfoVisible) {
         drawDebugInfo();
     }
 
-    // affichage des tirs
+    player.draw();
+    rlPopMatrix();
 
+    // affichage des tirs
     // tirs des ennemis
     BeginTextureMode(target);
     ClearBackground(BLANK);
@@ -273,6 +310,7 @@ void Scene::draw() {
         DrawTexture(enemySprites[e->def.spriteID], static_cast<int>(e->getPos().x), static_cast<int>(e->getPos().y),
                     WHITE);
     }
+
 
     if (!player.getHealth()) {
         listEnemies.clear();

@@ -67,7 +67,7 @@ void Player::update() {
     // animation du joueur
     animTimer += GetFrameTime();
 
-    std::cout << frameCount << "|" << animTimer << std::endl;
+    // std::cout << frameCount << "|" << animTimer << std::endl;
 
     if(animTimer >= animDelay) {
         frameCount++;

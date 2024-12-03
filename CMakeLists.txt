@@ -30,23 +30,23 @@ endif()
 
 #add_executable(${PROJECT_NAME} WIN32
 add_executable(${PROJECT_NAME}
-        src/main.cpp
-        src/Player.cpp
-        src/Player.h
-        src/Globals.h
-        src/Background.cpp
-        src/Background.h
-        src/Enemy.cpp
-        src/Enemy.h
-        src/patterns.h
-        src/Scene.cpp
-        src/Scene.h
-        src/MainMenu.cpp
-        src/MainMenu.h
-        src/BaseScene.cpp
-        src/BaseScene.h
-        src/OptionMenu.cpp
-        src/OptionMenu.h
+    src/main.cpp
+    src/Player.cpp
+    src/Player.h
+    src/Globals.h
+    src/Background.cpp
+    src/Background.h
+    src/Enemy.cpp
+    src/Enemy.h
+    src/patterns.h
+    src/Scene.cpp
+    src/Scene.h
+    src/MainMenu.cpp
+    src/MainMenu.h
+    src/BaseScene.cpp
+    src/BaseScene.h
+    src/OptionMenu.cpp
+    src/OptionMenu.h
 )
 
 #set(raylib_VERBOSE 1)
