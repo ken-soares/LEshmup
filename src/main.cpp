@@ -11,11 +11,13 @@
 #include <iostream>
 
 // DONE : Faire en sorte que les vies du joueur ne se reset pas d'un stage à l'autre
+// DONE: VOIR COMMENT FONCTIONNENT LES SHADERS ET EN APPLIQUER AUX BOMBES POUR FAIRE UN EFFET DE TREMBLEMENT
 
 // TODO: IMPLÉMENTER LE CHOIX DES OPTIONS
 // TODO: SYSTÈME DE SON
 // TODO: REFAIRE L'ART
-// TODO: VOIR COMMENT FONCTIONNENT LES SHADERS ET EN APPLIQUER AUX BOMBES POUR FAIRE UN EFFET DE TREMBLEMENT
+// TODO: DESIGN LES 5 NIVEAUX
+// TODO: RAJOUTER DES PATTERNS
 
 std::list<enemyDef> listSpawn1 = {
     {60.0, 2, 3.0f, 0.5f, move_fast, fire_none},
@@ -55,6 +57,7 @@ int main() {
 
     // initialisation de la fenêtre
     InitWindow(screenWidth, screenHeight, "scrolling Background");
+    InitAudioDevice();
 
     // données de la scène
     try {
@@ -89,6 +92,7 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    CloseAudioDevice();
     CloseWindow();
     return EXIT_SUCCESS;
 }

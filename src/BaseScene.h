@@ -18,6 +18,7 @@ public:
     static std::string readFile(const std::string& filepath);
     static bool exists(const std::string& name);
     Font gameFont{};
+    Music backgroundMusic{};
 };
 
 

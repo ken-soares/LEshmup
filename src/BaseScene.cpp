@@ -10,9 +10,14 @@ BaseScene::BaseScene() {
 
     // CREDIT Hewett Tsoi
     gameFont = LoadFont("../res/alagard.ttf");
+    backgroundMusic = LoadMusicStream("../res/flow_state.mp3");
+
+    SetMusicVolume(backgroundMusic, 0.5f); // Volume ranges from 0.0 to 1.0
 }
 
-BaseScene::~BaseScene() = default;
+BaseScene::~BaseScene(){
+    UnloadMusicStream(backgroundMusic);
+}
 
 void BaseScene::draw() {}
 

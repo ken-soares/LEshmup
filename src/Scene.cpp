@@ -56,6 +56,10 @@ void Scene::drawDebugInfo() const {
 
 Scene::Scene([[maybe_unused]] const std::string& filepath, const std::list<enemyDef> &lp) : BaseScene(), background(filepath){
 
+    // chargement de la premiere musique
+
+    // backgroundMusic = LoadMusicStream();
+
     // variables nécessaires au screen shake
     shakeMagnitude = 0.0f;
     shakeDuration = 0.0f;
@@ -84,6 +88,9 @@ Scene::Scene([[maybe_unused]] const std::string& filepath, const std::list<enemy
     bloom = LoadShader(nullptr, "../res/shaders/sobel.frag");
     outer_glow = LoadShader(nullptr, "../res/shaders/outer_glow.frag");
     target = LoadRenderTexture(screenWidth, screenHeight);
+
+
+    PlayMusicStream(backgroundMusic);
 }
 
 Scene::~Scene() = default;
@@ -113,6 +120,7 @@ void Scene::StartScreenShake() {
 int Scene::update(const int nextSceneCount) {
 
     UpdateScreenShake();
+    UpdateMusicStream(backgroundMusic);
 
     if(IsKeyPressed(KEY_F3)) {
         isDebugInfoVisible = !isDebugInfoVisible;
@@ -251,7 +259,6 @@ int Scene::update(const int nextSceneCount) {
 
 void Scene::draw() {
     ClearBackground(BLACK);
-
 
     rlPushMatrix();
     rlTranslatef(shakeOffset.x, shakeOffset.y, 0); // Apply shake offset
