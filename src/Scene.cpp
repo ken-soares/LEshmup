@@ -26,6 +26,9 @@ void Scene::drawHUD() const {
         case 3:
             DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 15}, GREEN, GREEN,DARKGREEN, DARKGREEN);
             break;
+        default:
+            DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 15}, ORANGE, ORANGE,RED, RED);
+            break;
     }
 
 
@@ -279,8 +282,8 @@ void Scene::draw() {
     player.draw();
     rlPopMatrix();
 
-    // affichage des tirs
-    // tirs des ennemis
+    // affichage de tous les tirs
+    // ceux des ennemis
     BeginTextureMode(target);
     ClearBackground(BLANK);
     for (auto &b: listBullets) {
@@ -316,7 +319,7 @@ void Scene::draw() {
     EndTextureMode();
 
     BeginShaderMode(bloom);
-    DrawTextureRec(target.texture, (Rectangle){0,0,(float)target.texture.width, (float)-target.texture.height}, (Vector2){0,0}, WHITE);
+    DrawTextureRec(target.texture, (Rectangle){0,0,static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height)}, (Vector2){0,0}, WHITE);
     EndShaderMode();
 
 
