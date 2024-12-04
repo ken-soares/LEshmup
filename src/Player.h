@@ -38,6 +38,8 @@ public:
     float immuneTimer;
     float immuneDelay;
     bool wasShot;
+
+    Pickup cauldron[3];
 private:
     Vector2 playerPosition{};
     float playerSpeed;

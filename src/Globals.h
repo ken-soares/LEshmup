@@ -31,6 +31,13 @@ enum Ecrans {
     OPTIONS,
 };
 
+enum PickupType {
+    ONE_UP,
+    BOMB,
+    UPGRADE,
+    SHIELD,
+};
+
 enum BulletType {
     BULLET_LONG,
     BULLET_ROUND,
@@ -44,6 +51,13 @@ struct Bullet {
     BulletType type;
 };
 
+struct Pickup {
+    bool remove;
+    Vector2 pos;
+    Vector2 vel;
+    PickupType type;
+};
+
 struct Particle {
     bool remove;
     Vector2 pos;
@@ -51,5 +65,7 @@ struct Particle {
     int timer;
     Color color;
 };
+
+
 
 #endif//GAME_GLOBALS_H

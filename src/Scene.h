@@ -43,6 +43,8 @@ public:
     // liste des tirs
     std::list<Bullet> listBullets;
 
+    std::list<Pickup> listPickups;
+
 
     bool isDebugInfoVisible;
 

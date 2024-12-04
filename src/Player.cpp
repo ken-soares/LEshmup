@@ -97,28 +97,28 @@ void Player::update() {
 
     if(IsKeyDown(KEY_Z) || IsKeyDown(KEY_W)) {
 
-        if(canFire) {
-            bullets.push_back(
-            {
-                false,
-                {playerPosition.x + 80.0f, playerPosition.y + 100.0f},
-                {20.0f, 0.0f},
-            });
-
+        if (canFire)
             bullets.push_back(
                     {
                             false,
                             {playerPosition.x + 80.0f, playerPosition.y + 100.0f},
-                            {20.0f, 5.0f},
+                            {20.0f, 0.0f},
                     });
+        /*
+                    bullets.push_back(
+                            {
+                                    false,
+                                    {playerPosition.x + 80.0f, playerPosition.y + 100.0f},
+                                    {20.0f, 5.0f},
+                            });
 
-            bullets.push_back(
-                    {
-                            false,
-                            {playerPosition.x + 80.0f, playerPosition.y + 100.0f},
-                            {20.0f, -5.0f},
-                    });
-        }
+                    bullets.push_back(
+                            {
+                                    false,
+                                    {playerPosition.x + 80.0f, playerPosition.y + 100.0f},
+                                    {20.0f, -5.0f},
+                            });
+        */
     }
 }
 

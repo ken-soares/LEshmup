@@ -17,14 +17,14 @@ void Scene::drawHUD() const {
 
     switch(player.getHealth()) {
         case 1:
-            DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 20}, ORANGE, ORANGE,RED, RED);
+            DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 15}, ORANGE, ORANGE,RED, RED);
             break;
         case 2:
-            DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 20}, GREEN, GREEN,ORANGE, ORANGE);
+            DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 15}, GREEN, GREEN,ORANGE, ORANGE);
             break;
 
         case 3:
-            DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 20}, GREEN, GREEN,DARKGREEN, DARKGREEN);
+            DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 15}, GREEN, GREEN,DARKGREEN, DARKGREEN);
             break;
     }
 
@@ -41,8 +41,15 @@ void Scene::drawHUD() const {
         DrawTextEx(gameFont,std::to_string(static_cast<int>(highScore)).c_str() , {screenWidth-240, 10}, 20, gameFontSpacing, WHITE);
     }
 
+    DrawTextEx(gameFont,"B" , {630, 8}, 15, gameFontSpacing, WHITE);
     for(int i = 0; i < player.getBombs(); i++) {
-        DrawRectangle(610 + (i * 40),15,20,10,RED);
+        DrawRectangle(660 + (i * 40),8,20,10,RED);
+    }
+    DrawTextEx(gameFont,"C" , {630, 30}, 15, gameFontSpacing, WHITE);
+    auto cauldron_color = GRAY;
+    cauldron_color.a -= 150;
+    for(int i = 0; i < 3; i++) {
+        DrawRectangle(660 + (i * 40),30,20,10,cauldron_color);
     }
 }
 
@@ -93,7 +100,17 @@ Scene::Scene([[maybe_unused]] const std::string& filepath, const std::list<enemy
     PlayMusicStream(backgroundMusic);
 }
 
-Scene::~Scene() = default;
+Scene::~Scene() {
+
+    for(const auto & enemySprite : enemySprites) {
+        UnloadTexture(enemySprite);
+    }
+
+    UnloadShader(bloom);
+    UnloadShader(outer_glow);
+
+    UnloadRenderTexture(target);
+}
 
 
 void Scene::UpdateScreenShake() {
