@@ -11,10 +11,10 @@
 #include <iostream>
 
 // DONE : Faire en sorte que les vies du joueur ne se reset pas d'un stage à l'autre
-// DONE: VOIR COMMENT FONCTIONNENT LES SHADERS ET EN APPLIQUER AUX BOMBES POUR FAIRE UN EFFET DE TREMBLEMENT
-// DONE: SYSTÈME DE MUSIQUE
+// DONE : VOIR COMMENT FONCTIONNENT LES SHADERS ET EN APPLIQUER AUX BOMBES POUR FAIRE UN EFFET DE TREMBLEMENT
+// DONE : SYSTÈME DE MUSIQUE
 
-// TODO: AJOUTER MECA CHAUDRON (RÉGLER LES VÉLOCITÉS, LE RAMASSAGE, ETC.)
+// TODO: AJOUTER MÉCANIQUE CHAUDRON (RÉGLER LES VÉLOCITÉS, LE RAMASSAGE, ETC.)
 // TODO: CHECK UNLOADING OF TEXTURES ON THE GPU
 // TODO: IMPLÉMENTER LE CHOIX DES OPTIONS
 // TODO: RAJOUTER DES PATTERNS
@@ -54,28 +54,33 @@ std::shared_ptr<BaseScene> SwitchScenes(const int count) {
     }
 }
 
+void Setup() {
+    InitWindow(screenWidth, screenHeight, "scrolling Background"); // initialisation de la fenêtre
+    InitAudioDevice();
+    SetTargetFPS(60);
+    SetConfigFlags(FLAG_MSAA_4X_HINT);      // Enable Multi Sampling Anti Aliasing 4x (if available)
+
+    if (!IsCursorHidden()) {
+        HideCursor();
+    }
+}
+
+void Cleanup() {
+    CloseAudioDevice();
+    CloseWindow();
+}
 
 int main() {
 
-    // initialisation de la fenêtre
-    InitWindow(screenWidth, screenHeight, "scrolling Background");
-    InitAudioDevice();
+    Setup();
 
-    // données de la scène
     try {
         int currSceneCount = 0;
-        int nextSceneCount;
         std::shared_ptr<BaseScene> currScene = std::make_shared<MainMenu>();
-        SetTargetFPS(60);
-        SetConfigFlags(FLAG_MSAA_4X_HINT);      // Enable Multi Sampling Anti Aliasing 4x (if available)
-
-        if (!IsCursorHidden()) {
-            HideCursor();
-        }
 
         while (!WindowShouldClose()) {
 
-            nextSceneCount = currScene->update(currSceneCount);
+            int nextSceneCount = currScene->update(currSceneCount);
 
             if(nextSceneCount == -1)
                 break;
@@ -84,7 +89,6 @@ int main() {
                 currScene = SwitchScenes(nextSceneCount);
                 currSceneCount = nextSceneCount;
             }
-
             BeginDrawing();
             currScene->draw();
             EndDrawing();
@@ -94,7 +98,7 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    CloseAudioDevice();
-    CloseWindow();
+    Cleanup();
+
     return EXIT_SUCCESS;
 }

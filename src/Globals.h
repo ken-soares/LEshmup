@@ -9,7 +9,8 @@
 
 #define KILL_SCORE 150
 #define PICKUP_LIMIT 1500
-#define PICKUP_TIMER 25
+#define MAX_ONSCREEN_PICKUP 3
+#define PICKUP_TIMER 45
 #define HITBOX_OFFSET_Y 10
 #define TEXTURE_OFFSET_X (-20)
 
@@ -60,6 +61,7 @@ struct Pickup {
     Vector2 vel;
     PickupType type;
     float timer;
+    bool magnet;
 };
 
 struct Particle {

@@ -7,6 +7,7 @@
 #include "patterns.h"
 #include "raymath.h"
 #include <iostream>
+#include <cmath>
 #include "rlgl.h"
 
 #include <string>
@@ -101,7 +102,8 @@ Scene::Scene([[maybe_unused]] const std::string& filepath, const std::list<enemy
     target = LoadRenderTexture(screenWidth, screenHeight);
 
 
-    PlayMusicStream(backgroundMusic);
+    //TODO: réactivé quand prêt
+    //PlayMusicStream(backgroundMusic);
 }
 
 Scene::~Scene() {
@@ -140,14 +142,15 @@ void Scene::StartScreenShake() {
 
 int Scene::update(const int nextSceneCount) {
 
-    if (pickUpScore > PICKUP_LIMIT) {
+    if (pickUpScore > PICKUP_LIMIT && listPickups.size() < MAX_ONSCREEN_PICKUP) {
         pickUpScore = 0;
         listPickups.push_back(Pickup {
             false,
            {screenWidth/3.0f, 50},
-            {static_cast<float>(dist100(rng))/14.0f + 2, static_cast<float>(dist100(rng))/10.0f},
+            {static_cast<float>(dist100(rng))/54.0f + 2, static_cast<float>(dist100(rng))/50.0f},
             static_cast<PickupType>(dist4(rng)),
             PICKUP_TIMER,
+            false,
         });
     }
     UpdateScreenShake();
@@ -221,12 +224,27 @@ int Scene::update(const int nextSceneCount) {
     // mise à jour des tirs
     for (auto &b: listBullets) {
         b.pos = Vector2Add(b.pos, b.vel);
-
         if (!player.wasShot && Vector2Length(Vector2Subtract(b.pos, player.getHitBoxVec())) < 3 * 3) {
             std::cout << "Player was shot" << std::endl;
             b.remove = true;
             player.setHealth(player.getHealth() - 1);
             player.wasShot = true;
+        }
+    }
+
+    // mise à jour des pickup
+    for (auto &p: listPickups) {
+        p.pos = Vector2Add(p.pos, p.vel);
+        if (Vector2Length(Vector2Subtract(p.pos, player.getHitBoxVec())) < 8*8) {
+            p.vel.x = 150 * ((player.getHitBoxVec().x - p.pos.x) / pow(
+                          Vector2Length(Vector2Subtract(p.pos, player.getHitBoxVec())), 2));
+            p.vel.y = 150 * ((player.getHitBoxVec().y - p.pos.y) / pow(
+                          Vector2Length(Vector2Subtract(p.pos, player.getHitBoxVec())), 2));
+        }
+
+        if (Vector2Length(Vector2Subtract(p.pos, player.getHitBoxVec())) < 3 * 3) {
+            std::cout << "Player got a buff" << std::endl;
+            p.remove = true;
         }
     }
 
@@ -283,7 +301,7 @@ int Scene::update(const int nextSceneCount) {
     // retrait des particules d'explosion
     listParticles.remove_if([&](const Particle &p) {return p.timer >= 50 || p.pos.x < 0 || p.pos.x > screenWidth || p.pos.y < 0 || p.pos.y >screenHeight || p.remove;});
     // retrait des bonus
-    listPickups.remove_if([&](const Pickup &p) {return p.pos.x < 0 || p.timer <= 0;});
+    listPickups.remove_if([&](const Pickup &p) {return p.pos.x < 0 || p.timer <= 0 || p.remove == true;});
 
 
     if (player.getHealth() > 0 && listSpawn.empty() && listEnemies.empty()) {
