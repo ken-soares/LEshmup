@@ -12,6 +12,7 @@
 inline std::random_device rd;
 inline std::mt19937 rng(rd());
 inline std::uniform_int_distribution<std::mt19937::result_type> dist100(1,100);
+inline std::uniform_int_distribution<std::mt19937::result_type> dist4(1,4);
 
 inline auto move_none = [](Enemy &e) {
     e.setPos({e.getPos().x - sceneSpeed, e.getPos().y});

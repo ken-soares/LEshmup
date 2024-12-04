@@ -3,9 +3,13 @@
 //
 
 #include "Player.h"
-#include <iostream>
 
 Player::Player() {
+
+    cauldron[0] = PickupType::NONE;
+    cauldron[1] = PickupType::NONE;
+    cauldron[2] = PickupType::NONE;
+
     playerPosition = {40, static_cast<float>(screenHeight) / 2};
     playerSpeed = 10.0f;
     playerTexture = LoadTexture("../res/redesign/perso_spritesheet_r.png");

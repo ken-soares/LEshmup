@@ -39,7 +39,7 @@ public:
     float immuneDelay;
     bool wasShot;
 
-    Pickup cauldron[3];
+    int cauldron[3]{};
 private:
     Vector2 playerPosition{};
     float playerSpeed;

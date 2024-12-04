@@ -8,8 +8,10 @@
 #include "raylib.h"
 
 #define KILL_SCORE 150
+#define PICKUP_LIMIT 1500
+#define PICKUP_TIMER 25
 #define HITBOX_OFFSET_Y 10
-#define TEXTURE_OFFSET_X -20
+#define TEXTURE_OFFSET_X (-20)
 
 constexpr int screenWidth = 1280;
 constexpr int screenHeight = 720;
@@ -32,6 +34,7 @@ enum Ecrans {
 };
 
 enum PickupType {
+    NONE,
     ONE_UP,
     BOMB,
     UPGRADE,
@@ -56,6 +59,7 @@ struct Pickup {
     Vector2 pos;
     Vector2 vel;
     PickupType type;
+    float timer;
 };
 
 struct Particle {

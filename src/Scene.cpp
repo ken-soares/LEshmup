@@ -11,7 +11,6 @@
 
 #include <string>
 
-
 void Scene::drawHUD() const {
     DrawRectangle(0, 0, screenWidth, 50, {0, 0, 0, 200});
 
@@ -88,6 +87,8 @@ Scene::Scene([[maybe_unused]] const std::string& filepath, const std::list<enemy
 
     listSpawn = lp;
 
+    pickUpScore = 0;
+
     isDebugInfoVisible = false;
 
     sceneScore = std::stod(readFile("../res/temp/score.temp"));
@@ -139,6 +140,16 @@ void Scene::StartScreenShake() {
 
 int Scene::update(const int nextSceneCount) {
 
+    if (pickUpScore > PICKUP_LIMIT) {
+        pickUpScore = 0;
+        listPickups.push_back(Pickup {
+            false,
+           {screenWidth/3.0f, 50},
+            {static_cast<float>(dist100(rng))/14.0f + 2, static_cast<float>(dist100(rng))/10.0f},
+            static_cast<PickupType>(dist4(rng)),
+            PICKUP_TIMER,
+        });
+    }
     UpdateScreenShake();
     UpdateMusicStream(backgroundMusic);
 
@@ -189,6 +200,19 @@ int Scene::update(const int nextSceneCount) {
         p.pos = Vector2Add(p.pos, p.vel);
     }
 
+    // mise a jour des pickups
+    for (auto &p: listPickups) {
+        p.pos = Vector2Add(p.pos, p.vel);
+        if (p.pos.y <= 50 || p.pos.y >= screenHeight) {
+            p.vel.y *= (-1);
+        }
+        if (p.pos.x >= screenWidth) {
+            p.vel.x *= (-1);
+        }
+
+        p.timer -= 3 * GetFrameTime();
+    }
+
     // mise à jour de chaque ennemi
     for (auto &e: listEnemies) {
         e->update(listBullets);
@@ -219,6 +243,7 @@ int Scene::update(const int nextSceneCount) {
 
                 e->def.health--;
                 sceneScore += KILL_SCORE;
+                pickUpScore += KILL_SCORE;
 
                 if (e->def.health <= 0) {
                     for (int i = 0; i < 200; i++) {
@@ -257,6 +282,8 @@ int Scene::update(const int nextSceneCount) {
     player.bullets.remove_if([&](const Bullet &b) { return b.pos.x < 0 || b.pos.x > screenWidth || b.pos.y < 0 || b.pos.y > screenHeight || b.remove;});
     // retrait des particules d'explosion
     listParticles.remove_if([&](const Particle &p) {return p.timer >= 50 || p.pos.x < 0 || p.pos.x > screenWidth || p.pos.y < 0 || p.pos.y >screenHeight || p.remove;});
+    // retrait des bonus
+    listPickups.remove_if([&](const Pickup &p) {return p.pos.x < 0 || p.timer <= 0;});
 
 
     if (player.getHealth() > 0 && listSpawn.empty() && listEnemies.empty()) {
@@ -282,6 +309,32 @@ void Scene::draw() {
     player.draw();
     rlPopMatrix();
 
+    for (auto &p: listPickups) {
+        switch (p.type) {
+            case ONE_UP:
+                DrawEllipse(static_cast<int>(p.pos.x), static_cast<int>(p.pos.y), 12.0f, 12.0f, RAYWHITE);
+                DrawEllipse(static_cast<int>(p.pos.x), static_cast<int>(p.pos.y), 10.0f, 10.0f, GREEN);
+                break;
+            case BOMB:
+                DrawEllipse(static_cast<int>(p.pos.x), static_cast<int>(p.pos.y), 12.0f, 12.0f, RAYWHITE);
+                DrawEllipse(static_cast<int>(p.pos.x), static_cast<int>(p.pos.y), 10.0f, 10.0f, ORANGE);
+                break;
+            case SHIELD:
+                DrawEllipse(static_cast<int>(p.pos.x), static_cast<int>(p.pos.y), 12.0f, 12.0f, RAYWHITE);
+                DrawEllipse(static_cast<int>(p.pos.x), static_cast<int>(p.pos.y), 10.0f, 10.0f, BLUE);
+                break;
+            case UPGRADE:
+                DrawEllipse(static_cast<int>(p.pos.x), static_cast<int>(p.pos.y), 12.0f, 12.0f, BLACK);
+                DrawEllipse(static_cast<int>(p.pos.x), static_cast<int>(p.pos.y), 10.0f, 10.0f, WHITE);
+                break;
+            case NONE:
+                p.remove = true;
+                break;
+            default:
+                break;
+        }
+    }
+
     // affichage de tous les tirs
     // ceux des ennemis
     BeginTextureMode(target);
@@ -300,6 +353,7 @@ void Scene::draw() {
                 break;
         }
     }
+
 
     // tirs du joueur
     for (auto &b: player.bullets) {

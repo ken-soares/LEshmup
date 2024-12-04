@@ -47,6 +47,7 @@ public:
 
 
     bool isDebugInfoVisible;
+    int pickUpScore;
 
     double sceneScore;
     double highScore;
