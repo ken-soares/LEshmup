@@ -131,7 +131,11 @@ int Scene::update(const int nextSceneCount) {
         listBullets.clear();
         player.setBombs(player.getBombs() - 1);
         for (auto &e: listEnemies) {
-            e->def.health -= 3;
+            if(e->def.isBoss) {
+                scenePosition += e->def.timer;
+            }
+            e->def.health = 0;
+
             if(e->def.health <= 0) {
                 for (int i = 0; i < 200; i++) {
                     // coordonnées polaires du vecteur de chaque particule
@@ -144,21 +148,8 @@ int Scene::update(const int nextSceneCount) {
                     });
                 }
             }
-
-            // uniquement les ennemis avec un vrai timer et pas celui par défaut
-            // aka les boss, etc.
-            if(e->def.timer < 9000.0f) {
-                if(e->def.timer - 500 * sceneSpeed < 0.0f) {
-                   scenePosition += e->def.timer;
-                   e->def.timer = 0;
-                } else {
-                    e->def.timer -= 500 * sceneSpeed;
-                    scenePosition += 500 * sceneSpeed;
-                }
-            }
         }
     }
-
 
     player.update();
     background.update();

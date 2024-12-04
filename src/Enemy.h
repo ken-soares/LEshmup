@@ -21,7 +21,8 @@ struct enemyDef {
     float offset = 0.0f;
     std::function<void(Enemy &)> funcMove;
     std::function<void(Enemy &, std::list<Bullet>&)> funcFire;
-    float timer = 9999.0f;
+    float timer;
+    bool isBoss;
 };
 
 class Enemy {
