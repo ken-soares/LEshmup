@@ -23,10 +23,8 @@ public:
     int update(int nextSceneCount) override;
 
     void draw() override;
-
-    void drawDebugInfo() const;
-
     void drawHUD() const;
+
 
     Player player;
     float scenePosition = 0.0f;
@@ -55,6 +53,31 @@ public:
 private:
     void StartScreenShake();
     void UpdateScreenShake();
+    void useBomb();
+    void updatePlayerShot();
+    void listRemove();
+    void spawnPickup();
+    void updatePickupsPlayerCol();
+    void updatePickups();
+
+    void updateParticles();
+
+    void updateEnemies();
+
+    void viewDebugInfo();
+    void spawnEnemies();
+    void updateEnemyShots();
+    void updatePlayerEnemyCol();
+
+    void drawPickups();
+    void drawDebugInfo() const;
+
+    void drawBombsHUD() const;
+    void drawScoreHUD() const;
+    void drawCauldronHUD() const;
+    void drawHealthHUD() const;
+
+
     Texture2D enemySprites[3]{};
     Background background;
     Shader bloom{};

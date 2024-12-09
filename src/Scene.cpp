@@ -14,29 +14,20 @@
 
 void Scene::drawHUD() const {
     DrawRectangle(0, 0, screenWidth, 50, {0, 0, 0, 200});
+    drawHealthHUD();
+    drawScoreHUD();
+    drawBombsHUD();
+    drawCauldronHUD();
+}
 
-    switch (player.getHealth()) {
-        case 1:
-            DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 15}, ORANGE,
-                                    ORANGE,RED, RED);
-            break;
-        case 2:
-            DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 15}, GREEN,
-                                    GREEN,ORANGE, ORANGE);
-            break;
-
-        case 3:
-            DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 15}, GREEN,
-                                    GREEN,DARKGREEN, DARKGREEN);
-            break;
-        default:
-            DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 15}, ORANGE,
-                                    ORANGE,RED, RED);
-            break;
+void Scene::drawBombsHUD() const {
+    DrawTextEx(gameFont, "B", {630, 8}, 15, gameFontSpacing, WHITE);
+    for (int i = 0; i < player.getBombs(); i++) {
+        DrawRectangle(660 + i * 40, 8, 20, 10,RED);
     }
+}
 
-
-    DrawTextEx(gameFont, "Health", {10, 10}, 20, gameFontSpacing, WHITE);
+void Scene::drawScoreHUD() const {
     DrawTextEx(gameFont, "Score", {screenWidth - 500, 10}, 20, gameFontSpacing, WHITE);
     DrawTextEx(gameFont, std::to_string(static_cast<int>(sceneScore)).c_str(), {screenWidth - 430, 10}, 20,
                gameFontSpacing, WHITE);
@@ -50,11 +41,9 @@ void Scene::drawHUD() const {
         DrawTextEx(gameFont, std::to_string(static_cast<int>(highScore)).c_str(), {screenWidth - 240, 10}, 20,
                    gameFontSpacing, WHITE);
     }
+}
 
-    DrawTextEx(gameFont, "B", {630, 8}, 15, gameFontSpacing, WHITE);
-    for (int i = 0; i < player.getBombs(); i++) {
-        DrawRectangle(660 + (i * 40), 8, 20, 10,RED);
-    }
+void Scene::drawCauldronHUD() const {
     DrawTextEx(gameFont, "C", {630, 30}, 15, gameFontSpacing, WHITE);
     auto cauldron_color = GRAY;
     cauldron_color.a -= 150;
@@ -82,6 +71,31 @@ void Scene::drawHUD() const {
     }
 }
 
+void Scene::drawHealthHUD() const {
+    switch (player.getHealth()) {
+        case 1:
+            DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 15}, ORANGE,
+                                    ORANGE,RED, RED);
+            break;
+        case 2:
+            DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 15}, GREEN,
+                                    GREEN,ORANGE, ORANGE);
+            break;
+
+        case 3:
+            DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 15}, GREEN,
+                                    GREEN,DARKGREEN, DARKGREEN);
+            break;
+        default:
+            DrawRectangleGradientEx(Rectangle{100, 10, 500.0f * static_cast<float>(player.getHealth()) / 3, 15}, ORANGE,
+                                    ORANGE,RED, RED);
+            break;
+    }
+
+
+    DrawTextEx(gameFont, "Health", {10, 10}, 20, gameFontSpacing, WHITE);
+
+}
 
 void Scene::drawDebugInfo() const {
     DrawRectangle(screenWidth - 400, screenHeight - 50, 400, 50, {0, 0, 0, 150});
@@ -90,11 +104,9 @@ void Scene::drawDebugInfo() const {
     DrawFPS(screenWidth - 100, screenHeight - 30);
 }
 
-Scene::Scene([[maybe_unused]] const std::string &filepath, const std::list<enemyDef> &lp) : BaseScene(),
-    background(filepath) {
+Scene::Scene([[maybe_unused]] const std::string &filepath, const std::list<enemyDef> &lp) : background(filepath) {
     //TODO: chargement de la premiere musique
-
-    // backgroundMusic = LoadMusicStream();
+    //backgroundMusic = LoadMusicStream("../res/flow_state.mp3");
 
     // variables nécessaires au screen shake
     shakeMagnitude = 0.0f;
@@ -128,7 +140,7 @@ Scene::Scene([[maybe_unused]] const std::string &filepath, const std::list<enemy
     target = LoadRenderTexture(screenWidth, screenHeight);
 
 
-    //TODO: réactivé quand prêt
+    //TODO: réactiver quand prêt
     //PlayMusicStream(backgroundMusic);
 }
 
@@ -141,6 +153,7 @@ Scene::~Scene() {
     UnloadShader(outer_glow);
 
     UnloadRenderTexture(target);
+    //UnloadMusicStream(backgroundMusic);
 }
 
 
@@ -153,7 +166,7 @@ void Scene::UpdateScreenShake() {
         shakeOffset.y = (static_cast<float>(dist100(rng)) / 100 * 2 - 1) * shakeMagnitude;
 
         // Gradually reduce the magnitude over time (ease out)
-        shakeMagnitude *= (shakeTimeLeft / shakeDuration);
+        shakeMagnitude *= shakeTimeLeft / shakeDuration;
     } else {
         // Reset the shake offset when the effect ends
         shakeOffset = {0.0f, 0.0f};
@@ -166,31 +179,13 @@ void Scene::StartScreenShake() {
     shakeTimeLeft = 0.5;
 }
 
-int Scene::update(const int nextSceneCount) {
-    if (pickUpScore > PICKUP_LIMIT && listPickups.size() < MAX_ONSCREEN_PICKUP) {
-        pickUpScore = 0;
-        listPickups.push_back(Pickup{
-            false,
-            {screenWidth / 3.0f, 50},
-            {static_cast<float>(dist100(rng)) / 54.0f + 2, static_cast<float>(dist100(rng)) / 50.0f},
-            static_cast<PickupType>(dist4(rng)),
-            PICKUP_TIMER,
-            false,
-        });
-    }
-    UpdateScreenShake();
-    UpdateMusicStream(backgroundMusic);
-
-    if (IsKeyPressed(KEY_F3)) {
-        isDebugInfoVisible = !isDebugInfoVisible;
-    }
-
+void Scene::useBomb() {
     if (IsKeyPressed(KEY_X) && player.getBombs() > 0) {
         sceneScore += 500;
         StartScreenShake();
         listBullets.clear();
         player.setBombs(player.getBombs() - 1);
-        for (auto &e: listEnemies) {
+        for (const auto &e: listEnemies) {
             if (e->def.isBoss) {
                 scenePosition += e->def.timer;
             }
@@ -199,8 +194,8 @@ int Scene::update(const int nextSceneCount) {
             if (e->def.health <= 0) {
                 for (int i = 0; i < 200; i++) {
                     // coordonnées polaires du vecteur de chaque particule
-                    float fAngle = (float) (static_cast<float>(dist100(rng)) / 100) * 2 * PI;
-                    float fVel = (float) (static_cast<float>(dist100(rng)) / 100) * 2.0f + 5.0f;
+                    const float fAngle = static_cast<float>(dist100(rng)) / 100 * 2 * PI;
+                    const float fVel = static_cast<float>(dist100(rng)) / 100 * 2.0f + 5.0f;
 
                     listParticles.push_back(Particle{
                         false, Vector2Add(e->getPos(), Vector2{24.0f, 24.0f}),
@@ -210,72 +205,9 @@ int Scene::update(const int nextSceneCount) {
             }
         }
     }
+}
 
-    player.update();
-    background.update();
-
-    scenePosition += sceneSpeed;
-
-    // apparition des ennemis aux moments adaptés
-    while (!listSpawn.empty() && scenePosition >= listSpawn.front().triggerTime) {
-        std::shared_ptr<Enemy> e(nullptr);
-        e = std::make_shared<Enemy>(listSpawn.front());
-        listSpawn.pop_front();
-        listEnemies.push_back(e);
-    }
-
-    // mise à jour des particules
-    for (auto &p: listParticles) {
-        p.pos = Vector2Add(p.pos, p.vel);
-    }
-
-    // mise a jour des pickups
-    for (auto &p: listPickups) {
-        p.pos = Vector2Add(p.pos, p.vel);
-        if (p.pos.y <= 50 || p.pos.y >= screenHeight) {
-            p.vel.y *= (-1);
-        }
-        if (p.pos.x >= screenWidth) {
-            p.vel.x *= (-1);
-        }
-
-        p.timer -= 3 * GetFrameTime();
-    }
-
-    // mise à jour de chaque ennemi
-    for (auto &e: listEnemies) {
-        e->update(listBullets);
-    }
-
-    // mise à jour des tirs
-    for (auto &b: listBullets) {
-        b.pos = Vector2Add(b.pos, b.vel);
-        if (!player.shieldOn && !player.wasShot && Vector2Length(Vector2Subtract(b.pos, player.getHitBoxVec())) < 3 *
-            3) {
-            std::cout << "Player was shot" << std::endl;
-            b.remove = true;
-            player.setHealth(player.getHealth() - 1);
-            player.wasShot = true;
-        }
-    }
-
-    // mise à jour des pickup
-    for (auto &p: listPickups) {
-        p.pos = Vector2Add(p.pos, p.vel);
-        if (Vector2Length(Vector2Subtract(p.pos, player.getHitBoxVec())) < 8 * 8) {
-            p.vel.x = static_cast<float>(150 * ((player.getHitBoxVec().x - p.pos.x) / pow(
-                                                    Vector2Length(Vector2Subtract(p.pos, player.getHitBoxVec())), 2)));
-            p.vel.y = static_cast<float>(150 * ((player.getHitBoxVec().y - p.pos.y) / pow(
-                                                    Vector2Length(Vector2Subtract(p.pos, player.getHitBoxVec())), 2)));
-        }
-
-        if (Vector2Length(Vector2Subtract(p.pos, player.getHitBoxVec())) < 3 * 3) {
-            std::cout << "Player got a buff" << std::endl;
-            p.remove = true;
-            player.setCauldron(p.type);
-        }
-    }
-
+void Scene::updatePlayerShot() {
     // mise à jour des tirs du joueur
     for (auto &b: player.bullets) {
         b.pos = Vector2Add(b.pos, b.vel);
@@ -306,26 +238,12 @@ int Scene::update(const int nextSceneCount) {
             }
         }
     }
+}
 
-    // mise à jour des collisions joueur/ennemi
-    for (const auto &e: listEnemies) {
-        // condition aussi grosse que ta daronne
-        if (!player.shieldOn && !player.wasShot && (
-                player.getHitBoxVec().x >= e->getPos().x && player.getHitBoxVec().x <= e->getPos().x + static_cast<
-                    float>(enemySprites[e->def.spriteID].
-                    width) && (player.getHitBoxVec().y >= e->getPos().y && player.getHitBoxVec().y <= e->getPos().y +
-                               static_cast<float>(enemySprites[e->def.spriteID].
-                                   height)))) {
-
-            std::cout << "Player hit an enemy" << std::endl;
-            player.setHealth(player.getHealth() - 1);
-            player.wasShot = true;
-        }
-    }
-
+void Scene::listRemove() {
     // retrait de chaque ennemi
     listEnemies.remove_if([&](const std::shared_ptr<Enemy> &e) {
-        return (e->getPos().x + static_cast<float>(enemySprites[e->def.spriteID].width)) <= 0 || e->def.health <= 0 || e
+        return e->getPos().x + static_cast<float>(enemySprites[e->def.spriteID].width) <= 0 || e->def.health <= 0 || e
                ->def.timer <= 0;
     });
 
@@ -343,10 +261,145 @@ int Scene::update(const int nextSceneCount) {
     });
     // retrait des bonus
     listPickups.remove_if([&](const Pickup &p) { return p.pos.x < 0 || p.timer <= 0 || p.remove == true; });
+}
 
+void Scene::spawnPickup() {
+    if (pickUpScore > PICKUP_LIMIT && listPickups.size() < MAX_ONSCREEN_PICKUP) {
+        pickUpScore = 0;
+        listPickups.push_back(Pickup{
+            false,
+            {screenWidth / 3.0f, 50},
+            {static_cast<float>(dist100(rng)) / 54.0f + 2, static_cast<float>(dist100(rng)) / 50.0f},
+            static_cast<PickupType>(dist4(rng)),
+            PICKUP_TIMER,
+            false,
+        });
+    }
+}
+
+void Scene::updatePickupsPlayerCol() {
+    // mise à jour des pickup
+    for (auto &p: listPickups) {
+        p.pos = Vector2Add(p.pos, p.vel);
+        if (Vector2Length(Vector2Subtract(p.pos, player.getHitBoxVec())) < 8 * 8) {
+            p.vel.x = static_cast<float>(150 * ((player.getHitBoxVec().x - p.pos.x) / pow(
+                                                    Vector2Length(Vector2Subtract(p.pos, player.getHitBoxVec())), 2)));
+            p.vel.y = static_cast<float>(150 * ((player.getHitBoxVec().y - p.pos.y) / pow(
+                                                    Vector2Length(Vector2Subtract(p.pos, player.getHitBoxVec())), 2)));
+        }
+
+        if (Vector2Length(Vector2Subtract(p.pos, player.getHitBoxVec())) < 3 * 3) {
+            std::cout << "Player got a buff" << std::endl;
+            p.remove = true;
+            player.setCauldron(p.type);
+        }
+    }
+}
+
+void Scene::viewDebugInfo() {
+    if (IsKeyPressed(KEY_F3)) {
+        isDebugInfoVisible = !isDebugInfoVisible;
+    }
+}
+
+
+void Scene::spawnEnemies() {
+    // apparition des ennemis aux moments adaptés
+    while (!listSpawn.empty() && scenePosition >= listSpawn.front().triggerTime) {
+        std::shared_ptr<Enemy> e(nullptr);
+        e = std::make_shared<Enemy>(listSpawn.front());
+        listSpawn.pop_front();
+        listEnemies.push_back(e);
+    }
+}
+
+void Scene::updateEnemyShots() {
+    // mise à jour des tirs
+    for (auto &b: listBullets) {
+        b.pos = Vector2Add(b.pos, b.vel);
+        if (!player.shieldOn && !player.wasShot && Vector2Length(Vector2Subtract(b.pos, player.getHitBoxVec())) < 3 *
+            3) {
+            std::cout << "Player was shot" << std::endl;
+            b.remove = true;
+            player.setHealth(player.getHealth() - 1);
+            player.wasShot = true;
+        }
+    }
+}
+
+void Scene::updatePlayerEnemyCol() {
+    // mise à jour des collisions joueur/ennemi
+    for (const auto &e: listEnemies) {
+        // condition aussi grosse que ta daronne
+        if (!player.shieldOn && !player.wasShot && (
+                player.getHitBoxVec().x >= e->getPos().x && player.getHitBoxVec().x <= e->getPos().x + static_cast<
+                    float>(enemySprites[e->def.spriteID].
+                    width) && (player.getHitBoxVec().y >= e->getPos().y && player.getHitBoxVec().y <= e->getPos().y +
+                               static_cast<float>(enemySprites[e->def.spriteID].
+                                   height)))) {
+
+            std::cout << "Player hit an enemy" << std::endl;
+            player.setHealth(player.getHealth() - 1);
+            player.wasShot = true;
+        }
+    }
+}
+
+void Scene::updatePickups() {
+    // mise a jour des pickups
+    for (auto &p: listPickups) {
+        p.pos = Vector2Add(p.pos, p.vel);
+        if (p.pos.y <= 50 || p.pos.y >= screenHeight) {
+            p.vel.y *= -1;
+        }
+        if (p.pos.x >= screenWidth) {
+            p.vel.x *= -1;
+        }
+
+        p.timer -= 3 * GetFrameTime();
+    }
+}
+
+void Scene::updateParticles() {
+    // mise à jour des particules
+    for (auto &p: listParticles) {
+        p.pos = Vector2Add(p.pos, p.vel);
+    }
+}
+
+void Scene::updateEnemies() {
+    // mise à jour de chaque ennemi
+    for (const auto &e: listEnemies) {
+        e->update(listBullets);
+    }
+}
+
+int Scene::update(const int nextSceneCount) {
+    spawnPickup();
+    UpdateScreenShake();
+    UpdateMusicStream(backgroundMusic);
+    viewDebugInfo();
+    useBomb();
+    player.update();
+    background.update();
+    scenePosition += sceneSpeed;
+    spawnEnemies();
+    updatePickups();
+    updatePlayerShot();
+    updateParticles();
+    updateEnemies();
+    updateEnemyShots();
+    updatePickupsPlayerCol();
+    updatePlayerEnemyCol();
+    listRemove();
 
     if (player.getHealth() > 0 && listSpawn.empty() && listEnemies.empty()) {
-        writeFile("../res/temp/score.temp", std::to_string(sceneScore));
+        std::cout << "Debug: nextSceneCount = " << nextSceneCount << std::endl;
+        std::cout << "Debug: player health = " << player.getHealth() << std::endl;
+        std::cout << "Debug: listSpawn.size() = " << listSpawn.size() << std::endl;
+        std::cout << "Debug: listEnemies.size() = " << listEnemies.size() << std::endl;
+
+       writeFile("../res/temp/score.temp", std::to_string(sceneScore));
         writeFile("../res/temp/lives.temp", std::to_string(player.getHealth()));
         writeFile("../res/temp/bombs.temp", std::to_string(player.getBombs()));
         return nextSceneCount + 1;
@@ -354,20 +407,8 @@ int Scene::update(const int nextSceneCount) {
     return nextSceneCount;
 }
 
-void Scene::draw() {
-    ClearBackground(BLACK);
 
-    rlPushMatrix();
-    rlTranslatef(shakeOffset.x, shakeOffset.y, 0); // Apply shake offset
-    background.draw();
-
-    if (isDebugInfoVisible) {
-        drawDebugInfo();
-    }
-
-    player.draw();
-    rlPopMatrix();
-
+void Scene::drawPickups() {
     for (auto &p: listPickups) {
         switch (p.type) {
             case ONE_UP:
@@ -393,12 +434,28 @@ void Scene::draw() {
                 break;
         }
     }
+}
+
+void Scene::draw() {
+    ClearBackground(BLACK);
+
+    rlPushMatrix();
+    rlTranslatef(shakeOffset.x, shakeOffset.y, 0); // Apply shake offset
+    background.draw();
+
+    if (isDebugInfoVisible) {
+        drawDebugInfo();
+    }
+
+    player.draw();
+    rlPopMatrix();
+    drawPickups();
 
     // affichage de tous les tirs
     // ceux des ennemis
     BeginTextureMode(target);
     ClearBackground(BLANK);
-    for (auto &b: listBullets) {
+    for (const auto &b: listBullets) {
         switch (b.type) {
             case BULLET_LONG:
                 DrawEllipse(static_cast<int>(b.pos.x), static_cast<int>(b.pos.y), 22.0f, 7.0f, MAROON);
@@ -413,9 +470,8 @@ void Scene::draw() {
         }
     }
 
-
     // tirs du joueur
-    for (auto &b: player.bullets) {
+    for (const auto &b: player.bullets) {
         DrawEllipse(static_cast<int>(b.pos.x), static_cast<int>(b.pos.y), 17.0f, 7.0f, RAYWHITE);
         DrawEllipse(static_cast<int>(b.pos.x), static_cast<int>(b.pos.y), 15.0f, 5.0f, SKYBLUE);
     }
