@@ -14,6 +14,8 @@ public:
     Player();
     ~Player();
     void draw() const;
+
+
     void update();
 
     void setHealth(int value);
@@ -36,18 +38,32 @@ public:
     float gunReloadDelay;
 
     float immuneTimer;
+    float normalImmuneDelay;
     float immuneDelay;
     bool wasShot;
 
+    float shieldDelay;
+    bool shieldOn;
+
+    int shotLevel;
+    void setShotLevel(int level);
+
     void setCauldron(int color);
-
-    void printCauldron();
-
     [[nodiscard]] int getCauldron(int pos) const;
 
-    void emptyCauldron();
-
 private:
+    int canActivateC();
+    void printCauldron();
+    void emptyCauldron();
+    void activateC();
+    void move();
+    void fire();
+    void animate();
+
+    void immune();
+
+    void godMode();
+
     int cauldron[3]{};
     Vector2 playerPosition{};
     float playerSpeed;

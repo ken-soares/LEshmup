@@ -8,7 +8,7 @@
 #include "raylib.h"
 
 #define KILL_SCORE 150
-#define PICKUP_LIMIT 1500
+#define PICKUP_LIMIT 1000
 #define MAX_ONSCREEN_PICKUP 3
 #define PICKUP_TIMER 45
 #define HITBOX_OFFSET_Y 10
