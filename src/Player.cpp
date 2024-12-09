@@ -4,11 +4,11 @@
 
 #include "Player.h"
 
+#include <iostream>
+
 Player::Player() {
 
-    cauldron[0] = PickupType::NONE;
-    cauldron[1] = PickupType::NONE;
-    cauldron[2] = PickupType::NONE;
+    emptyCauldron();
 
     playerPosition = {40, static_cast<float>(screenHeight) / 2};
     playerSpeed = 10.0f;
@@ -160,4 +160,33 @@ void Player::setPosition(Vector2 value) {
 
 Vector2 Player::getHitBoxVec() const {
     return Vector2 {playerPosition.x + static_cast<float>(playerTextureSize)/2, playerPosition.y + HITBOX_OFFSET_Y + static_cast<float>(playerTextureSize)/2};
+}
+
+int Player::getCauldron(const int pos) const {
+    return cauldron[pos];
+}
+
+void Player::emptyCauldron() {
+    cauldron[0] = NONE;
+    cauldron[1] = NONE;
+    cauldron[2] = NONE;
+}
+
+void Player::setCauldron(const int color) {
+    for (auto &item: cauldron) {
+        if (item != color) {
+            if (item == NONE) {
+                item = color;
+                return;
+            }
+            emptyCauldron();
+            return;
+        }
+    }
+}
+
+void Player::printCauldron() {
+    for (const auto &item: cauldron) {
+        std::cout << item << std::endl;
+    }
 }

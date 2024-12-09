@@ -52,7 +52,26 @@ void Scene::drawHUD() const {
     auto cauldron_color = GRAY;
     cauldron_color.a -= 150;
     for(int i = 0; i < 3; i++) {
-        DrawRectangle(660 + (i * 40),30,20,10,cauldron_color);
+        switch(player.getCauldron(i)) {
+            case NONE:
+            DrawRectangle(660 + (i * 40),30,20,10,cauldron_color);
+            break;
+            case ONE_UP:
+            DrawRectangle(660 + (i * 40),30,20,10,GREEN);
+            break;
+            case BOMB:
+            DrawRectangle(660 + (i * 40),30,20,10,ORANGE);
+            break;
+            case UPGRADE:
+            DrawRectangle(660 + (i * 40),30,20,10,WHITE);
+            break;
+            case SHIELD:
+            DrawRectangle(660 + (i * 40),30,20,10,BLUE);
+            break;
+            default:
+            std::cout << "error in the buffs" << std::endl;
+            break;
+        }
     }
 }
 
@@ -161,6 +180,7 @@ int Scene::update(const int nextSceneCount) {
     }
 
     if(IsKeyPressed(KEY_X) && player.getBombs() > 0) {
+        sceneScore += 500;
         StartScreenShake();
         listBullets.clear();
         player.setBombs(player.getBombs() - 1);
@@ -236,15 +256,16 @@ int Scene::update(const int nextSceneCount) {
     for (auto &p: listPickups) {
         p.pos = Vector2Add(p.pos, p.vel);
         if (Vector2Length(Vector2Subtract(p.pos, player.getHitBoxVec())) < 8*8) {
-            p.vel.x = 150 * ((player.getHitBoxVec().x - p.pos.x) / pow(
-                          Vector2Length(Vector2Subtract(p.pos, player.getHitBoxVec())), 2));
-            p.vel.y = 150 * ((player.getHitBoxVec().y - p.pos.y) / pow(
-                          Vector2Length(Vector2Subtract(p.pos, player.getHitBoxVec())), 2));
+            p.vel.x =  static_cast<float>(150 * ((player.getHitBoxVec().x - p.pos.x) / pow(
+                          Vector2Length(Vector2Subtract(p.pos, player.getHitBoxVec())), 2)));
+            p.vel.y = static_cast<float>(150 * ((player.getHitBoxVec().y - p.pos.y) / pow(
+                          Vector2Length(Vector2Subtract(p.pos, player.getHitBoxVec())), 2)));
         }
 
         if (Vector2Length(Vector2Subtract(p.pos, player.getHitBoxVec())) < 3 * 3) {
             std::cout << "Player got a buff" << std::endl;
             p.remove = true;
+            player.setCauldron(p.type);
         }
     }
 

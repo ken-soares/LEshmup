@@ -39,8 +39,16 @@ public:
     float immuneDelay;
     bool wasShot;
 
-    int cauldron[3]{};
+    void setCauldron(int color);
+
+    void printCauldron();
+
+    [[nodiscard]] int getCauldron(int pos) const;
+
+    void emptyCauldron();
+
 private:
+    int cauldron[3]{};
     Vector2 playerPosition{};
     float playerSpeed;
     Texture2D playerTexture{};
