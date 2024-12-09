@@ -17,14 +17,10 @@
 class Scene final : public BaseScene {
 public:
     explicit Scene([[maybe_unused]] const std::string& filepath, const std::list<enemyDef>& lp);
-
     ~Scene() override;
-
     int update(int nextSceneCount) override;
 
     void draw() override;
-    void drawHUD() const;
-
 
     Player player;
     float scenePosition = 0.0f;
@@ -59,9 +55,7 @@ private:
     void spawnPickup();
     void updatePickupsPlayerCol();
     void updatePickups();
-
     void updateParticles();
-
     void updateEnemies();
 
     void viewDebugInfo();
@@ -70,8 +64,12 @@ private:
     void updatePlayerEnemyCol();
 
     void drawPickups();
+    void drawBullets() const;
     void drawDebugInfo() const;
+    void drawParticles();
+    void drawGameOver();
 
+    void drawHUD() const;
     void drawBombsHUD() const;
     void drawScoreHUD() const;
     void drawCauldronHUD() const;

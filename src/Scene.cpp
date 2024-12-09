@@ -438,15 +438,12 @@ void Scene::drawPickups() {
 
 void Scene::draw() {
     ClearBackground(BLACK);
-
     rlPushMatrix();
     rlTranslatef(shakeOffset.x, shakeOffset.y, 0); // Apply shake offset
     background.draw();
-
     if (isDebugInfoVisible) {
         drawDebugInfo();
     }
-
     player.draw();
     rlPopMatrix();
     drawPickups();
@@ -455,6 +452,35 @@ void Scene::draw() {
     // ceux des ennemis
     BeginTextureMode(target);
     ClearBackground(BLANK);
+
+    drawBullets();
+
+    // tirs du joueur
+    for (const auto &b: player.bullets) {
+        DrawEllipse(static_cast<int>(b.pos.x), static_cast<int>(b.pos.y), 17.0f, 7.0f, RAYWHITE);
+        DrawEllipse(static_cast<int>(b.pos.x), static_cast<int>(b.pos.y), 15.0f, 5.0f, SKYBLUE);
+    }
+
+    // affichage des particules d'explosion
+    drawParticles();
+    EndTextureMode();
+
+    BeginShaderMode(bloom);
+    DrawTextureRec(target.texture, (Rectangle){
+                       0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height)
+                   }, (Vector2){0, 0}, WHITE);
+    EndShaderMode();
+    // affichage de la texture de chaque ennemi
+    for (const auto &e: listEnemies) {
+        DrawTexture(enemySprites[e->def.spriteID], static_cast<int>(e->getPos().x), static_cast<int>(e->getPos().y),
+                    WHITE);
+    }
+    drawGameOver();
+    drawHUD();
+}
+
+
+void Scene::drawBullets() const {
     for (const auto &b: listBullets) {
         switch (b.type) {
             case BULLET_LONG:
@@ -469,14 +495,8 @@ void Scene::draw() {
                 break;
         }
     }
-
-    // tirs du joueur
-    for (const auto &b: player.bullets) {
-        DrawEllipse(static_cast<int>(b.pos.x), static_cast<int>(b.pos.y), 17.0f, 7.0f, RAYWHITE);
-        DrawEllipse(static_cast<int>(b.pos.x), static_cast<int>(b.pos.y), 15.0f, 5.0f, SKYBLUE);
-    }
-
-    // affichage des particules d'explosion
+}
+void Scene::drawParticles() {
     for (auto &p: listParticles) {
         DrawEllipse(static_cast<int>(p.pos.x), static_cast<int>(p.pos.y), 3.0f, 3.0f, p.color);
         DrawEllipse(static_cast<int>(p.pos.x) + 2, static_cast<int>(p.pos.y) - 2, 3.0f, 3.0f, {255, 161, 0, p.color.a});
@@ -485,22 +505,9 @@ void Scene::draw() {
         p.vel.y /= 1.05f;
         p.color.a -= 5;
     }
-    EndTextureMode();
+}
 
-    BeginShaderMode(bloom);
-    DrawTextureRec(target.texture, (Rectangle){
-                       0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height)
-                   }, (Vector2){0, 0}, WHITE);
-    EndShaderMode();
-
-
-    // affichage de la texture de chaque ennemi
-    for (const auto &e: listEnemies) {
-        DrawTexture(enemySprites[e->def.spriteID], static_cast<int>(e->getPos().x), static_cast<int>(e->getPos().y),
-                    WHITE);
-    }
-
-
+void Scene::drawGameOver() {
     if (!player.getHealth()) {
         listEnemies.clear();
         listBullets.clear();
@@ -516,6 +523,4 @@ void Scene::draw() {
             writeFile("../res/save/high.save", std::to_string(static_cast<int>(sceneScore)));
         }
     }
-
-    drawHUD();
 }
