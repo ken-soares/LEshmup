@@ -60,3 +60,15 @@ bool BaseScene::exists(const std::string& name) {
     return f.good();
 }
 
+
+std::vector<std::string> BaseScene::splitStringByNewline(const std::string& input) {
+    std::vector<std::string> lines;
+    std::istringstream stream(input);
+    std::string line;
+
+    while (std::getline(stream, line)) {
+        lines.push_back(line);
+    }
+
+    return lines;
+}

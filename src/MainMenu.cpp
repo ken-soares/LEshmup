@@ -15,7 +15,7 @@ enum Option {
     QUIT,
 };
 
-MainMenu::MainMenu() : BaseScene(){
+MainMenu::MainMenu() {
     select = 0;
     femiTex = LoadTexture("../res/redesign/naf0.png");
     animDir = 1;
@@ -31,7 +31,9 @@ MainMenu::MainMenu() : BaseScene(){
     quitCenter = static_cast<int>(screenWidth/2.0f - (MeasureTextEx(gameFont, "Quit", gameNameSize, gameFontSpacing).x)/2.0f);
 }
 
-MainMenu::~MainMenu() = default;
+MainMenu::~MainMenu() {
+    UnloadTexture(femiTex);
+}
 
 int MainMenu::update(int _count) {
 
@@ -39,7 +41,7 @@ int MainMenu::update(int _count) {
 
     if(femiAnimRate >= 0.5f) {
         femiAnimRate = 0.0f;
-        animDir *= (-1);
+        animDir *= -1;
     }
 
     if(IsKeyPressed(KEY_DOWN)) {
@@ -64,7 +66,7 @@ int MainMenu::update(int _count) {
     }
 
     if(IsKeyPressed(KEY_ENTER) && select == OPT) {
-        return Ecrans::OPTIONS;
+        return OPTIONS;
     }
 
     if(IsKeyPressed(KEY_ENTER) && select == PLAY) {
@@ -78,10 +80,9 @@ int MainMenu::update(int _count) {
         writeFile("../res/temp/lives.temp", "3");
         writeFile("../res/temp/bombs.temp", "3");
 
-        return Ecrans::LV1;
-    } else {
-        return Ecrans::MENU;
+        return DLG_1;
     }
+    return MENU;
 }
 
 void MainMenu::draw() {

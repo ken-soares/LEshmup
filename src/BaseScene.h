@@ -7,6 +7,8 @@
 
 #include "raylib.h"
 #include <string>
+#include <vector>
+#include <sstream>
 
 class BaseScene {
 public:
@@ -16,6 +18,8 @@ public:
     virtual int update(int count);
     static void writeFile(const std::string& filepath, const std::string& contents);
     static std::string readFile(const std::string& filepath);
+
+    static std::vector<std::string> splitStringByNewline(const std::string& input);
     static bool exists(const std::string& name);
     Font gameFont{};
     Music backgroundMusic{};

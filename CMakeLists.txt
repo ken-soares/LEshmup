@@ -47,6 +47,10 @@ add_executable(${PROJECT_NAME}
     src/BaseScene.h
     src/OptionMenu.cpp
     src/OptionMenu.h
+        src/DialogueSystem.cpp
+        src/DialogueSystem.h
+        src/DialogueScene.cpp
+        src/DialogueScene.h
 )
 
 #set(raylib_VERBOSE 1)

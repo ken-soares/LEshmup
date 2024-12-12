@@ -25,11 +25,14 @@ constexpr int menuItemSize = 35;
 
 enum Ecrans {
     MENU = 0,
+    DLG_1,
     LV1,
+    DLG_2,
     LV2,
+    DLG_3,
     LV3,
+    DLG_4,
     LV4,
-    LV5,
     SCOREBOARD,
     OPTIONS,
 };
