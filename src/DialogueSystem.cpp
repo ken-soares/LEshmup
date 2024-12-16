@@ -5,10 +5,13 @@
 #include "DialogueSystem.h"
 #include <iostream>
 
+#include "Globals.h"
+
 DialogueSystem::DialogueSystem(const std::vector<std::string> &lines, const int width,
                                const float delay): dialogueLines(lines), currentLine(0), maxWidth(width) {
     dialogue.charDelay = delay;
     startLine(currentLine);
+    gameFont = LoadFontEx("../res/fg1.ttf", 200, nullptr, 255);
 }
 
 void DialogueSystem::startLine(const size_t lineIndex) {
@@ -20,16 +23,10 @@ void DialogueSystem::startLine(const size_t lineIndex) {
     }
 }
 
-void DialogueSystem::update() {
+bool DialogueSystem::update() {
     if (!dialogue.complete) {
         dialogue.timer += GetFrameTime();
         auto charsToShow = static_cast<size_t>(dialogue.timer / dialogue.charDelay);
-
-        // Débogage des valeurs importantes
-        std::cout << "Timer: " << dialogue.timer
-                  << ", CharsToShow: " << charsToShow
-                  << ", FullTextSize: " << dialogue.fullText.size()
-                  << ", FullText: " << dialogue.fullText << std::endl;
 
         if (charsToShow >= dialogue.fullText.size() || IsKeyPressed(KEY_C)) {
             dialogue.visibleText = dialogue.fullText;
@@ -37,13 +34,32 @@ void DialogueSystem::update() {
         } else {
             dialogue.visibleText = dialogue.fullText.substr(0, charsToShow);
         }
+
+        if (std::isspace(dialogue.visibleText.back())) {
+            return true;
+        } else {
+            return false;
+        }
     }
+    return false;
+}
+
+std::string DialogueSystem::getSpriteName() const {
+    std::string word = dialogueLines.at(currentLine);
+    word = word.substr(0, word.find(':'));
+    //std::cout << word.substr(0, word.find(':')) << std::endl;
+    return "../res/faces/" +  word + ".png";
 }
 
 
+std::string DialogueSystem::getSpriteAudio() const {
+    std::string word = dialogueLines.at(currentLine);
+    word = word.substr(0, word.find(':'));
+    //std::cout << word.substr(0, word.find(':')) << std::endl;
+    return "../res/faces/" +  word + ".mp3";
+}
 
 bool DialogueSystem::nextLine() {
-
     if (dialogue.complete && currentLine + 1 < dialogueLines.size()) {
         currentLine++;
         startLine(currentLine);
@@ -53,7 +69,10 @@ bool DialogueSystem::nextLine() {
 }
 
 void DialogueSystem::draw(const int x, const int y, const int fontSize, const Color color) const {
-    DrawText(dialogue.visibleText.c_str(), x, y, fontSize, color);
+    Vector2 pos;
+    pos.x = static_cast<float>(x);
+    pos.y = static_cast<float>(y);
+    DrawTextEx(gameFont,dialogue.visibleText.c_str(), pos, static_cast<float>(fontSize),gameFontSpacing, color);
 }
 
 

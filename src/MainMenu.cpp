@@ -89,8 +89,8 @@ void MainMenu::draw() {
 
     ClearBackground(BLACK);
 
-    DrawTextEx(gameFont, "Game Name", {xCenterText, 100}, gameNameSize, gameFontSpacing, (Color)PURPLE);
-    DrawTextEx(gameFont, "A game by Torrent", {screenWidth - 380.0f, screenHeight-50.0f}, 24, gameFontSpacing, (Color)WHITE);
+    DrawTextEx(gameFont, "Game Name", {xCenterText, 100}, gameNameSize, gameFontSpacing, PURPLE);
+    DrawTextEx(gameFont, "A game by Torrent", {screenWidth - 380.0f, screenHeight-50.0f}, 34, gameFontSpacing, WHITE);
 
     DrawTextureEx(femiTex, {screenWidth - 150.0f, screenHeight - 130.0f + static_cast<float>(animDir) * femiAnimRate * 6}, 0, 1.5, WHITE);
 

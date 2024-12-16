@@ -19,8 +19,8 @@ constexpr int screenHeight = 720;
 constexpr float sceneSpeed = 4.0f;
 
 constexpr int gameFontSpacing = 2;
-constexpr int gameNameSize = 50;
-constexpr int menuItemSize = 35;
+constexpr int gameNameSize = 100;
+constexpr int menuItemSize = 50;
 
 
 enum Ecrans {

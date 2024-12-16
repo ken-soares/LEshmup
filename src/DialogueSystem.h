@@ -26,10 +26,17 @@ public:
 
     DialogueSystem(const std::vector<std::string>& lines, int width, float delay);
     void startLine(size_t lineIndex);
-    void update();
+
+    bool update();
+
+    std::string getSpriteName() const;
+
+    std::string getSpriteAudio() const;
+
     bool nextLine();
     void draw(int x, int y, int fontSize, Color color) const;
 private:
+    Font gameFont{};
     [[nodiscard]] std::string wrapText(const std::string& text) const;
 };
 

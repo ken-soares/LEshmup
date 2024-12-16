@@ -8,8 +8,7 @@
 
 BaseScene::BaseScene() {
 
-    // CREDIT Hewett Tsoi
-    gameFont = LoadFont("../res/alagard.ttf");
+    gameFont = LoadFontEx("../res/fg1.ttf", 200, nullptr, 255);
     backgroundMusic = LoadMusicStream("../res/flow_state.mp3");
 
     SetMusicVolume(backgroundMusic, 0.5f); // Volume ranges from 0.0 to 1.0
@@ -56,7 +55,7 @@ std::string BaseScene::readFile(const std::string& filepath) {
 }
 
 bool BaseScene::exists(const std::string& name) {
-    std::ifstream f(name.c_str());
+    const std::ifstream f(name.c_str());
     return f.good();
 }
 

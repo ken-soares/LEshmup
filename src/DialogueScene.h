@@ -10,7 +10,7 @@
 
 class DialogueScene final : public BaseScene {
 public:
-    DialogueScene(const std::string &Filepath);
+    explicit DialogueScene(const std::string &Filepath);
     ~DialogueScene() override;
 
     int update(int _count) override;
@@ -18,7 +18,13 @@ public:
 
 private:
     DialogueSystem dialogueSystem;
+    bool hasLoadedCharFace;
+    Texture2D charFaceTexture{};
+    Texture2D chatBoxTex{};
+    Sound charSound{};
 
+std::string charFacePath;
+std::string charSoundPath;
 };
 
 

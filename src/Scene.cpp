@@ -21,30 +21,30 @@ void Scene::drawHUD() const {
 }
 
 void Scene::drawBombsHUD() const {
-    DrawTextEx(gameFont, "B", {630, 8}, 15, gameFontSpacing, WHITE);
+    DrawTextEx(gameFont, "B", {630, 2}, 25, gameFontSpacing, WHITE);
     for (int i = 0; i < player.getBombs(); i++) {
         DrawRectangle(660 + i * 40, 8, 20, 10,RED);
     }
 }
 
 void Scene::drawScoreHUD() const {
-    DrawTextEx(gameFont, "Score", {screenWidth - 500, 10}, 20, gameFontSpacing, WHITE);
-    DrawTextEx(gameFont, std::to_string(static_cast<int>(sceneScore)).c_str(), {screenWidth - 430, 10}, 20,
+    DrawTextEx(gameFont, "Score", {screenWidth - 500, 10}, 30, gameFontSpacing, WHITE);
+    DrawTextEx(gameFont, std::to_string(static_cast<int>(sceneScore)).c_str(), {screenWidth - 430, 10}, 30,
                gameFontSpacing, WHITE);
 
     if (highScore < sceneScore) {
-        DrawTextEx(gameFont, "Hi-Score", {screenWidth - 350, 10}, 20, gameFontSpacing, YELLOW);
-        DrawTextEx(gameFont, std::to_string(static_cast<int>(sceneScore)).c_str(), {screenWidth - 240, 10}, 20,
+        DrawTextEx(gameFont, "Hi-Score", {screenWidth - 350, 10}, 30, gameFontSpacing, YELLOW);
+        DrawTextEx(gameFont, std::to_string(static_cast<int>(sceneScore)).c_str(), {screenWidth - 240, 10}, 30,
                    gameFontSpacing, YELLOW);
     } else {
-        DrawTextEx(gameFont, "Hi-Score", {screenWidth - 350, 10}, 20, gameFontSpacing, WHITE);
-        DrawTextEx(gameFont, std::to_string(static_cast<int>(highScore)).c_str(), {screenWidth - 240, 10}, 20,
+        DrawTextEx(gameFont, "Hi-Score", {screenWidth - 350, 10}, 30, gameFontSpacing, WHITE);
+        DrawTextEx(gameFont, std::to_string(static_cast<int>(highScore)).c_str(), {screenWidth - 240, 10}, 30,
                    gameFontSpacing, WHITE);
     }
 }
 
 void Scene::drawCauldronHUD() const {
-    DrawTextEx(gameFont, "C", {630, 30}, 15, gameFontSpacing, WHITE);
+    DrawTextEx(gameFont, "C", {630, 22}, 25, gameFontSpacing, WHITE);
     auto cauldron_color = GRAY;
     cauldron_color.a -= 150;
     for (int i = 0; i < 3; i++) {
