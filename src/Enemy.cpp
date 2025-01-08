@@ -8,16 +8,16 @@
 Enemy::Enemy(const enemyDef& d) {
     def = d;
     pos = {
-            screenWidth,
-            d.offset * static_cast<float>(screenHeight),
+        screenWidth,
+        d.offset * static_cast<float>(screenHeight),
     };
-
 }
+
 Enemy::~Enemy() = default;
 
-void Enemy::update(std::list<Bullet> &listBullets) {
+void Enemy::update(std::list<Bullet> &listBullets, const Player& player) {
     def.funcMove(*this);
-    def.funcFire(*this, listBullets);
+    def.funcFire(*this, listBullets, player);
     def.timer -= sceneSpeed;
     if(def.timer <= 0) {
         listBullets.clear();

@@ -93,7 +93,7 @@ void Scene::drawHealthHUD() const {
     }
 
 
-    DrawTextEx(gameFont, "Health", {10, 10}, 20, gameFontSpacing, WHITE);
+    DrawTextEx(gameFont, "Health", {10, 10}, 30, gameFontSpacing, WHITE);
 
 }
 
@@ -370,7 +370,7 @@ void Scene::updateParticles() {
 void Scene::updateEnemies() {
     // mise à jour de chaque ennemi
     for (const auto &e: listEnemies) {
-        e->update(listBullets);
+        e->update(listBullets, player);
     }
 }
 

@@ -12,6 +12,8 @@
 #include <list>
 #include <memory>
 
+#include "Player.h"
+
 class Enemy;
 
 struct enemyDef {
@@ -20,7 +22,7 @@ struct enemyDef {
     float health = 0.0f;
     float offset = 0.0f;
     std::function<void(Enemy &)> funcMove;
-    std::function<void(Enemy &, std::list<Bullet>&)> funcFire;
+    std::function<void(Enemy &, std::list<Bullet>&, const Player&)> funcFire;
     float timer;
     bool isBoss;
 };
@@ -29,7 +31,7 @@ class Enemy {
 public:
     explicit Enemy(const enemyDef& d);
     ~Enemy();
-    void update(std::list<Bullet>& listBullets);
+    void update(std::list<Bullet>& listBullets, const Player& player);
     [[nodiscard]] Vector2 getPos() const;
     void setPos(Vector2 p);
     enemyDef def;

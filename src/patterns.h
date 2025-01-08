@@ -47,10 +47,10 @@ inline auto move_sin_narrow = [](Enemy &e) {
 };
 
 // FONCTIONS DE TIR
-inline auto fire_none = [](Enemy &e, std::list<Bullet> &bullets) {
+inline auto fire_none = [](Enemy &e, std::list<Bullet> &bullets, const Player &player) {
 };
 
-inline auto fire_Straight2 = [](Enemy &e, std::list<Bullet> &bullets) {
+inline auto fire_Straight2 = [](Enemy &e, std::list<Bullet> &bullets, const Player &player) {
     constexpr float fDelay = 0.2f;
     e.dataFire[0] += GetFrameTime();
 
@@ -65,7 +65,7 @@ inline auto fire_Straight2 = [](Enemy &e, std::list<Bullet> &bullets) {
 };
 
 
-inline auto fire_CirclePulse12 = [](Enemy &e, std::list<Bullet> &bullets) {
+inline auto fire_CirclePulse12 = [](Enemy &e, std::list<Bullet> &bullets, const Player& player) {
     constexpr float fDelay = 1.2f;
     constexpr int nBullets = 25;
     constexpr float fTheta = 2 * PI / nBullets;
@@ -86,7 +86,7 @@ inline auto fire_CirclePulse12 = [](Enemy &e, std::list<Bullet> &bullets) {
     }
 };
 
-inline auto fire_SpiralReverse02 = [](Enemy &e, std::list<Bullet> &bullets) {
+inline auto fire_SpiralReverse02 = [](Enemy &e, std::list<Bullet> &bullets, const Player &player) {
   constexpr float fDelay = 0.013f;
   e.dataFire[0] += GetFrameTime();
 
@@ -116,7 +116,7 @@ inline auto fire_SpiralReverse02 = [](Enemy &e, std::list<Bullet> &bullets) {
   }
 };
 
-inline auto fire_CircleConstUpdate04 = [](Enemy &e, std::list<Bullet> &bullets) {
+inline auto fire_CircleConstUpdate04 = [](Enemy &e, std::list<Bullet> &bullets, const Player &player) {
   e.dataFire[1] += 0.1;
   constexpr float fDelay = 0.4f;
   constexpr int nBullets = 25;
@@ -136,7 +136,7 @@ inline auto fire_CircleConstUpdate04 = [](Enemy &e, std::list<Bullet> &bullets) 
   }
 };
 
-inline auto fire_CirclePulseRand05 = [](Enemy &e, std::list<Bullet> &bullets) {
+inline auto fire_CirclePulseRand05 = [](Enemy &e, std::list<Bullet> &bullets, const Player &player) {
   constexpr float fDelay = 0.5f;
   constexpr int nBullets = 60;
   constexpr float fTheta = 2 * PI / nBullets;
@@ -155,7 +155,7 @@ inline auto fire_CirclePulseRand05 = [](Enemy &e, std::list<Bullet> &bullets) {
   }
 };
 
-inline auto fire_DoubleSpiral = [](Enemy &e, std::list<Bullet> &bullets) {
+inline auto fire_DoubleSpiral = [](Enemy &e, std::list<Bullet> &bullets, const Player &player) {
     constexpr float fDelay = 0.05f;
     e.dataFire[0] += GetFrameTime();
 
@@ -178,7 +178,7 @@ inline auto fire_DoubleSpiral = [](Enemy &e, std::list<Bullet> &bullets) {
 };
 
 
-inline auto fire_Rings = [](Enemy &e, std::list<Bullet> &bullets) {
+inline auto fire_Rings = [](Enemy &e, std::list<Bullet> &bullets, const Player &player) {
     constexpr float fDelay = 1.0f;
 
     e.dataFire[0] += GetFrameTime();
@@ -207,7 +207,7 @@ inline auto fire_Rings = [](Enemy &e, std::list<Bullet> &bullets) {
 };
 
 /*
-inline auto fire_ArcFront = [](Enemy &e, std::list<Bullet> &bullets) {
+inline auto fire_ArcFront = [](Enemy &e, std::list<Bullet> &bullets, const Player &player) {
     constexpr float fDelay = 0.8f;
     constexpr int nBullets = 13;
     constexpr float fSpread = PI / 4; // Arc total
@@ -233,7 +233,7 @@ inline auto fire_ArcFront = [](Enemy &e, std::list<Bullet> &bullets) {
 */
 
 
-inline auto fire_Triskel8 = [](Enemy &e, std::list<Bullet> &bullets) {
+inline auto fire_Triskel8 = [](Enemy &e, std::list<Bullet> &bullets, const Player &player) {
     constexpr float fDelay = 0.05f;    // Délai entre les tirs
 
     e.dataFire[0] += GetFrameTime();
@@ -265,5 +265,84 @@ inline auto fire_Triskel8 = [](Enemy &e, std::list<Bullet> &bullets) {
         e.dataFire[1] += fRotationSpeed;
     }
 };
+
+
+inline auto fire_Homing = [](Enemy &e, std::list<Bullet> &bullets, const Player &player) {
+    constexpr float fDelay = 0.2f;
+    e.dataFire[0] += GetFrameTime();
+
+    if (e.dataFire[0] >= fDelay) {
+        e.dataFire[0] = 0.0f;
+
+        Bullet b{};
+        b.pos = e.getPos();
+
+        // Utiliser la position du joueur comme cible
+        Vector2 targetPos = player.getHitBoxVec();
+
+        // Calculer la direction vers la cible
+        Vector2 direction = {targetPos.x - b.pos.x, targetPos.y - b.pos.y};
+
+        // Normaliser le vecteur de direction
+        float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+        if (length > 0.0f) {
+            direction.x /= length;
+            direction.y /= length;
+        }
+
+        // Appliquer la vitesse du projectile
+        constexpr float bulletSpeed = 10.0f; // Exemple de vitesse
+        b.vel = {direction.x * bulletSpeed, direction.y * bulletSpeed};
+
+        b.type = BULLET_ROUND;
+        bullets.push_back(b);
+    }
+};
+
+
+
+inline auto fire_Homing4 = [](Enemy &e, std::list<Bullet> &bullets, const Player &player) {
+    constexpr float fDelay = 0.2f;
+    constexpr float bulletSpeed = 5.0f; // Nouvelle vitesse
+    constexpr int numProjectiles = 4;   // Nombre de projectiles
+    constexpr float angleOffset = 0.2f; // Écart angulaire entre les projectiles
+
+    e.dataFire[0] += GetFrameTime();
+
+    if (e.dataFire[0] >= fDelay) {
+        e.dataFire[0] = 0.0f;
+
+        Vector2 targetPos = player.getHitBoxVec(); // Utiliser getHitBoxVec
+
+        for (int i = 0; i < numProjectiles; ++i) {
+            Bullet b{};
+            b.pos = e.getPos();
+
+            // Calculer la direction vers la cible
+            Vector2 direction = {targetPos.x - b.pos.x, targetPos.y - b.pos.y};
+
+            // Normaliser le vecteur de direction
+            float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+            if (length > 0.0f) {
+                direction.x /= length;
+                direction.y /= length;
+            }
+
+            // Appliquer un décalage angulaire
+            float angle = std::atan2(direction.y, direction.x);
+            angle += (i - (numProjectiles - 1) / 2.0f) * angleOffset;
+
+            direction.x = std::cos(angle);
+            direction.y = std::sin(angle);
+
+            // Appliquer la vitesse du projectile
+            b.vel = {direction.x * bulletSpeed, direction.y * bulletSpeed};
+            b.type = BULLET_ROUND;
+
+            bullets.push_back(b);
+        }
+    }
+};
+
 
 #endif //PATTERNS_H
