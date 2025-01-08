@@ -26,6 +26,7 @@ public:
 
     // animation
     Texture2D femiTex{};
+    Texture2D bgTex{};
     float femiAnimRate;
     int animDir;
 
@@ -33,11 +34,6 @@ private:
 
     int textSize;
     float xCenterText;
-
-    int playCenter = 0;
-    int fullCenter = 0;
-    int quitCenter = 0;
-    int optCenter = 0;
 };
 
 #endif //MAINMENU_H

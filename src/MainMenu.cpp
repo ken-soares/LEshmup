@@ -6,8 +6,8 @@
 
 #include "Globals.h"
 
-#define OFFSET 30.0f
-
+#define GAME_NAME "One ingredient short of youth!"
+#define MENU_X_ALIGN 40.0f
 enum Option {
     PLAY = 0,
     FULLSCREEN,
@@ -17,22 +17,18 @@ enum Option {
 
 MainMenu::MainMenu() {
     select = 0;
-    femiTex = LoadTexture("../res/redesign/naf0.png");
+    femiTex = LoadTexture("../res/redesign/leaf_menu.png");
+    bgTex = LoadTexture("../res/redesign/bg_menu.png");
     animDir = 1;
     femiAnimRate = 0.0f;
 
-    textSize = static_cast<int>(MeasureTextEx(gameFont, "Game Name", gameNameSize, gameFontSpacing).x);
-    xCenterText = static_cast<float>(screenWidth/2.0f - (static_cast<float>(textSize)/2.0f));
-
-
-    playCenter = static_cast<int>(screenWidth/2.0f - (MeasureTextEx(gameFont, "Play", gameNameSize, gameFontSpacing).x)/2.0f);
-    fullCenter = static_cast<int>(screenWidth/2.0f - (MeasureTextEx(gameFont, "Fullscreen", gameNameSize, gameFontSpacing).x)/2.0f);
-    optCenter = static_cast<int>(screenWidth/2.0f - (MeasureTextEx(gameFont, "Options", gameNameSize, gameFontSpacing).x)/2.0f);
-    quitCenter = static_cast<int>(screenWidth/2.0f - (MeasureTextEx(gameFont, "Quit", gameNameSize, gameFontSpacing).x)/2.0f);
+    textSize = static_cast<int>(MeasureTextEx(gameFont, GAME_NAME, gameNameSize, gameFontSpacing).x);
+    xCenterText = (screenWidth/2.0f - static_cast<float>(textSize)/2.0f) - 40.0f;
 }
 
 MainMenu::~MainMenu() {
     UnloadTexture(femiTex);
+    UnloadTexture(bgTex);
 }
 
 int MainMenu::update(int _count) {
@@ -89,32 +85,35 @@ void MainMenu::draw() {
 
     ClearBackground(BLACK);
 
-    DrawTextEx(gameFont, "Game Name", {xCenterText, 100}, gameNameSize, gameFontSpacing, PURPLE);
-    DrawTextEx(gameFont, "A game by Torrent", {screenWidth - 380.0f, screenHeight-50.0f}, 34, gameFontSpacing, WHITE);
+    DrawTextureEx(bgTex, {0.0f,0.0f}, 0, 1, WHITE);
 
-    DrawTextureEx(femiTex, {screenWidth - 150.0f, screenHeight - 130.0f + static_cast<float>(animDir) * femiAnimRate * 6}, 0, 1.5, WHITE);
+    DrawTextEx(gameFont, GAME_NAME, {xCenterText+2, 100+2}, gameNameSize, gameFontSpacing, BLACK);
+    DrawTextEx(gameFont, GAME_NAME, {xCenterText, 100}, gameNameSize, gameFontSpacing, WHITE);
+    DrawTextEx(gameFont, "A game by Torrent", {60.0f, screenHeight-50.0f}, 34, gameFontSpacing, WHITE);
+
+    DrawTextureEx(femiTex, {0.0f, screenHeight - 70.0f + static_cast<float>(animDir) * femiAnimRate * 6}, 0, 0.6, WHITE);
 
     if(select == PLAY) {
-        DrawTextEx(gameFont, "> Play <", {static_cast<float>(playCenter), 300}, menuItemSize, gameFontSpacing, (Color){153, 230, 0, 255});
+        DrawTextEx(gameFont, "Play o", {MENU_X_ALIGN, 300}, menuItemSize, gameFontSpacing, P_YELLOW);
     } else {
-        DrawTextEx(gameFont, "Play", {static_cast<float>(playCenter) + OFFSET, 300}, menuItemSize, gameFontSpacing, WHITE);
+        DrawTextEx(gameFont, "Play", {MENU_X_ALIGN, 300}, menuItemSize, gameFontSpacing, WHITE);
     }
 
     if(select == FULLSCREEN) {
-        DrawTextEx(gameFont, "> Fullscreen <", {static_cast<float>(fullCenter) + 15.0f, 350}, menuItemSize, gameFontSpacing, (Color){153, 230, 0, 255});
+        DrawTextEx(gameFont, "Fullscreen o", {MENU_X_ALIGN, 350}, menuItemSize, gameFontSpacing, P_YELLOW);
     } else {
-        DrawTextEx(gameFont, "Fullscreen", {static_cast<float>(fullCenter) + OFFSET + 15.0f, 350}, menuItemSize, gameFontSpacing, WHITE);
+        DrawTextEx(gameFont, "Fullscreen", {MENU_X_ALIGN, 350}, menuItemSize, gameFontSpacing, WHITE);
     }
 
     if(select == OPT) {
-        DrawTextEx(gameFont, "> Options <", {static_cast<float>(optCenter), 400}, menuItemSize, gameFontSpacing, (Color){153, 230, 0, 255});
+        DrawTextEx(gameFont, "Options o", {MENU_X_ALIGN, 400}, menuItemSize, gameFontSpacing, P_YELLOW);
     } else {
-        DrawTextEx(gameFont, "Options", {static_cast<float>(optCenter) + OFFSET, 400}, menuItemSize, gameFontSpacing, WHITE);
+        DrawTextEx(gameFont, "Options", {MENU_X_ALIGN, 400}, menuItemSize, gameFontSpacing, WHITE);
     }
 
     if(select == QUIT) {
-        DrawTextEx(gameFont, "> Quit <", {static_cast<float>(quitCenter), 450}, menuItemSize, gameFontSpacing, (Color){153, 230, 0, 255});
+        DrawTextEx(gameFont, "Quit o", {MENU_X_ALIGN, 450}, menuItemSize, gameFontSpacing, P_YELLOW);
     } else {
-        DrawTextEx(gameFont, "Quit", {static_cast<float>(quitCenter) + OFFSET, 450}, menuItemSize, gameFontSpacing, WHITE);
+        DrawTextEx(gameFont, "Quit", {MENU_X_ALIGN, 450}, menuItemSize, gameFontSpacing, WHITE);
     }
 }

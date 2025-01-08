@@ -14,12 +14,18 @@
 #define HITBOX_OFFSET_Y 10
 #define TEXTURE_OFFSET_X (-20)
 
+
+// PALETTE
+#define P_YELLOW (Color){250, 224, 199, 255}
+#define P_DARKEST (Color){89, 91, 125}
+
+
 constexpr int screenWidth = 1280;
 constexpr int screenHeight = 720;
 constexpr float sceneSpeed = 4.0f;
 
 constexpr int gameFontSpacing = 2;
-constexpr int gameNameSize = 100;
+constexpr int gameNameSize = 120;
 constexpr int menuItemSize = 50;
 
 
