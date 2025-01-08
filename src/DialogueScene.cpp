@@ -32,10 +32,10 @@ int DialogueScene::update(const int _count) {
         hasLoadedCharFace = true;
         charFacePath = dialogueSystem.getSpriteName();
         charSoundPath = dialogueSystem.getSpriteAudio();
+        charFaceTexture = LoadTexture(charFacePath.c_str());
+        charSound = LoadSound(charSoundPath.c_str());
     }
 
-    charFaceTexture = LoadTexture(charFacePath.c_str());
-    charSound = LoadSound(charSoundPath.c_str());
 
     int textLeft = true;
     bool playSound = dialogueSystem.update();
