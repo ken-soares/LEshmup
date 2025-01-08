@@ -12,22 +12,40 @@
 
 #include "DialogueScene.h"
 
+
+/*
+
+ __  ___ _   _  _    ___ ___ _   ___  _  __ ___   __ __   ___ ___ ___
+|  \| __| \_/ |/ \  | o \ __| | | __|/ \/ _| __| [o ) _/ | __| __| o )
+| o ) _|| \_/ ( o ) |   / _|| |_| _|| o \_ \ _|   /(\_ \ | _|| _|| o \
+|__/|___|_| |_|\_/  |_|\\___|___|___|_n_|__/___| /__|__/ |_| |___|___/
+
+    3 levels, one full game mechanic, first dialogs
+    (art, sound, and game balancing might change for full release)
+*/
+
 // DONE : Faire en sorte que les vies du joueur ne se reset pas d'un stage à l'autre
 // DONE : VOIR COMMENT FONCTIONNENT LES SHADERS ET EN APPLIQUER AUX BOMBES POUR FAIRE UN EFFET DE TREMBLEMENT
 // DONE : SYSTÈME DE MUSIQUE
 // DONE : AJOUTER MÉCANIQUE CHAUDRON (RÉGLER LES VÉLOCITÉS, LE RAMASSAGE, ETC.)
 // DONE :  SYSTÈME DE DIALOGUES
+// DONE : RAJOUTER DES PATTERNS DE TYPE HOMING
 
 // TODO: RAJOUTER DES PATTERNS
 // TODO: CHECK UNLOADING OF TEXTURES ON THE GPU
-// TODO: DESIGN LES 5 NIVEAUX
+// TODO: DESIGN LES 3 NIVEAUX DE LA DEMO
 // TODO: AJOUTER LE SUPPORT POUR PLUSIEURS FONT DANS LE SYSTÈME DE DIALOGUE
-// TODO: REFAIRE L'ART (non urgent) (nique ta mère, en fait si, c'est urgent)
+// TODO: REFAIRE L'ART
 // TODO: IMPLÉMENTER LE CHOIX DES OPTIONS
 // TODO: ÌMPLÉMENTER UNE SCENE DE SCOREBOARD
+// TODO: MAPPER DES NIVEAUX
+// TODO: BALANCER LA MÉCANIQUE UNIQUE
+// TODO: ÉTENDRE LA MÉCANIQUE UNIQUE EN AJOUTANT UN BONUS DE SCORE POUR 3 BUFFS ACQUIS
+// TODO: DONNER UN BONUS SPECIAL QUI REND UNE VIE D'UN COUP TOUS LES X SCORES
 
 std::list<enemyDef> listSpawn1 = {
     {60.0, 2, 3.0f, 0.5f, move_fast, fire_none,9999.f, false},
+    //{180.0, 2, 3.0f, 0.75f, move_third, fire_Homing, 9999.f, false},
     {180.0, 2, 3.0f, 0.75f, move_sin_narrow, fire_Straight2, 9999.f, false},
     {180.0, 2, 3.0f, 0.25f, move_sin_narrow, fire_Straight2, 9999.f, false},
     {800.0, 0, 3.0f, 0.25f, move_basic, fire_none, 9999.f, false},
@@ -37,9 +55,13 @@ std::list<enemyDef> listSpawn1 = {
     {1500.0, 0, 5.0f, 0.5f, move_none, fire_CirclePulse12, 9999.f, false},
     {3000.0, 0, 999.0f, 0.5f, move_third, fire_CircleConstUpdate04, 3500.0, true},
     {6500.0, 0, 999.0f, 0.5f, set_third, fire_CirclePulseRand05, 3000.0, true},
-    {9500.0, 0, 100.0f, 0.5f, set_third, fire_Triskel8, 5000.0, true},
-    //{9500.0, 0, 100.0f, 0.5f, set_third, fire_Rings, 5000.0, true}, TODO: améliorer parce que ca pue le kk
+    {9500.0, 0, 100.0f, 0.5f, set_third, fire_Homing4, 5000.0, true},
+    {1000.0, 0, 3.0, 0.75f, move_third, fire_Homing, 5000.0, true},
+    {1500.0, 0, 3.0, 0.25f, move_third, fire_Homing, 5000.0, true},
+
     //{9500.0, 0, 100.0f, 0.5f, set_third, fire_SpiralReverse02, 5000.0, true},
+    //{9500.0, 0, 100.0f, 0.5f, set_third, fire_Triskel8, 5000.0, true},
+    //{9500.0, 0, 100.0f, 0.5f, set_third, fire_Rings, 5000.0, true}, TODO: améliorer parce que ca pue le kk
     //{9500.0, 0, 100.0f, 0.5f, set_third, fire_DoubleSpiral, 5000.0, true},
 };
 
@@ -55,7 +77,7 @@ std::shared_ptr<BaseScene> SwitchScenes(const int count) {
         case LV1:
             std::cout << "changed scene count:" << count << std::endl;
             return std::make_shared<Scene>("../res/redesign/lv1.png", listSpawn1);
-
+            //return std::make_shared<Scene>("../res/redesign/pastel/background_one.png", listSpawn1);
         case OPTIONS:
             std::cout << "changed scene count:" << count << std::endl;
             return std::make_shared<OptionMenu>();
